@@ -1,0 +1,53 @@
+<nano-import href="lazy/settings-card.html"></nano-import>
+<nano-import href="lazy/ic-view.html"></nano-import>
+
+<style>
+  settings-content settings-column {
+    display: block;
+    box-sizing: border-box;
+    min-width: 320px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  settings-content settings-card {
+    display: block;
+    min-height: 400px;
+    margin-top: 40px;
+  }
+</style>
+
+<template id="settings-content">
+  <settings-column>
+
+    <settings-card name="Internet connection" kind="ic-view" icon="wifi"></settings-card>
+    <settings-card name="Appearance" kind="ic-view" icon="settings"></settings-card>
+    <settings-card name="People" kind="ic-view" icon="people"></settings-card>
+    <settings-card name="Passwords" kind="ic-view" icon="key"></settings-card>
+    
+  </settings-column>
+</template>  
+
+<script>
+  Nano({
+    name: 'settings-content',
+    sugar: {
+      properties: ['route'],
+      template: document.currentImport.querySelector('#settings-content')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.lazyProperty('route');
+      },
+      routeChanged: function(route) {
+        var dom = this.$$('[name="' + route + '"]');
+        setTimeout(function() {
+          if (dom) {
+            var r = dom.getBoundingClientRect();
+            window.scrollTo(0, r.top + window.scrollY - 136);
+          }
+        }, 100);
+      }
+    }
+  });
+</script>

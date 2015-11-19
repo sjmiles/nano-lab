@@ -1,0 +1,39 @@
+<script>
+  
+  Nano({
+    name: 'nano-fetch',
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.send();
+      },
+      send: function() {
+        var method = 'GET';
+        //var url = 'http://loripsum.net/api/10/short/headers';
+        var url = 'assets/html.html';
+        // `this.xhr` is Highlander
+        var xhr = this.xhr = new XMLHttpRequest();
+        xhr.open(method, url/*, async, user, password*/);
+        xhr.onreadystatechange = function() {
+          this.receive(xhr);
+        }.bind(this);
+        xhr.send();
+      },
+      receive: function(xhr) {
+        if (xhr !== this.xhr) {
+          return;
+        }
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+          return;
+        }
+        if (xhr.status !== 200) {
+          this.fire('response-error', {response: xhr});
+          return;
+        }
+        this.fire('response-changed', {response: xhr});
+      }
+
+    }
+  });
+
+</script>

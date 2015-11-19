@@ -1,0 +1,32 @@
+<nano-import href="../../../components/nano-fetch.html"></nano-import>
+
+<style>
+  card-view {
+    display: block;
+    padding: 24px;
+  }
+</style>
+
+<template id="card-view">
+
+  <nano-fetch url="some-data-url" on-response-changed="_onResponse"></nano-fetch>
+
+</template>  
+
+<script>
+  Nano({
+    name: 'card-view',
+    sugar: {
+      properties: ['route'],
+      template: document.currentImport.querySelector('#card-view')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+      },
+      _onResponse: function(e) {
+        this.innerHTML = e.detail.response.responseText;
+      }
+    }
+  });
+</script>

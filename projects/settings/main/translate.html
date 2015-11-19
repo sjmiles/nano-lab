@@ -1,0 +1,31 @@
+<script>
+(function() {
+  
+  var corpi = {
+    en: {
+    },
+    es: {
+      "Basic": "Básico",
+      "Internet connection": "Conexión a Internet",
+      "Wifi network": "Red Wifi",
+      "Appearance": "Aparición",
+      "People": "Gente",
+      "Passwords": "Contraseñas",
+      "Known networks": "Redes de Conocimiento",
+      "Join other": "Únete a otra",
+      "Advanced": "Avanzada"
+    }
+  };
+  
+  //var locale = 'es';
+  var locale = 'en';
+
+  var corpus = corpi[locale];
+  
+  // translation operator
+  Nano.translate = function(m) {
+    return corpus[m] || m;
+  };
+
+})();
+</script>

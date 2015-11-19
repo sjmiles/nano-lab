@@ -1,0 +1,54 @@
+<script>
+  Nano({
+    name: 'nano-router',
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        // watch route
+        this.listen(window, 'popstate', this.parseLocation);
+        // convert SPA clicks to pushState changes
+        document.addEventListener('click', this.jackClicks.bind(this), true);
+        //this.listen(document, 'click', this.jackClicks);
+        // fetching the route can happen before listeners are 
+        // attached (lifecycle: (1) create, (2) desugar), so 
+        // we have to go async
+        setTimeout(this.parseLocation.bind(this), 1);
+      },
+      jackClicks: function(e) {
+        var a = this._eventAnchor(e);
+        if (a) {
+          var href = a.getAttribute('href');
+          if (href && href.indexOf('://') < 0) {
+            e.preventDefault();
+            if (href.slice(-4) != 'nope') {
+              history.pushState(null, '', a.href);
+              this.parseLocation();
+            }
+          }      
+        }      
+      },    
+      _eventAnchor: function(e) {
+        if (e.path) {
+          var a;
+          e.path.some(function(ac) {
+            return (ac.localName === 'a') && (a=ac);
+          });
+          return a;
+        } else {
+          var a = e.target;
+          while (a) {
+            if (a.localName === 'a') {
+              return a;
+            }
+            a = a.parentElement;
+          }
+        }
+      },
+      // extract route from url params
+      parseLocation: function() {
+        var route = decodeURIComponent(location.search.slice(1));
+        this.fire('route-changed', {route: route});
+      }
+    }
+  });
+</script>

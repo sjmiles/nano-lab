@@ -1,0 +1,55 @@
+<!-- nano-import urls are main-document relative -->
+
+<nano-import href="../../components/nano-router.html"></nano-import>
+<nano-import href="lazy/content-view.html"></nano-import>
+<nano-import href="lazy/crumb-bar.html"></nano-import>
+
+<template id="main-view">
+
+  <nano-router on-route-changed="onUpdateRoute"></nano-router>
+
+  <content-view route="{{route}}"></content-view>
+  
+  <nav-bar fixed on-click="toggleNav"><div style="padding:24px;">Nav Bar</div></nav-bar>
+  
+  <app-bar fixed horizontal center layout>
+    <icon menu on-click="toggleNav"></icon>
+    <span>App Bar</span>
+    <crumb-bar routes="{{routes}}"></crumb-bar>
+  </app-bar>
+  
+</template>  
+
+<script>
+
+  Nano({
+    name: 'main-view',
+    sugar: {
+      properties: ['navOpen', 'route'],
+      template: document.currentImport.querySelector('#main-view')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      toggleNav: function() {
+        this.navOpen = !this.navOpen;
+      },
+      navOpenChanged: function(open) {
+        Polymer.Utils.boolAttribute(this.$$('nav-bar'), 'open', open);
+      },
+      onUpdateRoute: function(e) {
+        this.route = e.detail.route;
+      },
+      routeChanged: function(route) {
+        // extract state information from route
+        var routes = route.split('/');
+        var last = routes.pop() || "content";
+        routes.push(last);
+        // render breadcrumbs
+        this.updateBindings('routes', routes);
+        // scroll to
+        this.updateBindings('route', last);
+      }
+    }
+  });
+  
+</script>

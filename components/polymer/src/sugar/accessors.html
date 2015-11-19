@@ -1,0 +1,44 @@
+<script>
+(function() {
+
+  Accessors = {};
+  
+  Accessors.desugarProperties = function() {
+    this._data = Object.create(null);
+  };
+
+  Accessors.sugarProperties = function(ctor, properties) {
+    var ptype = ctor.prototype;
+    ptype._setProperty = Accessors._setProperty;
+    for (var i=0, l=properties.length, p; i<l; i++) {
+      Accessors.makeAccessors(ptype, properties[i]);
+    }
+    return Accessors.desugarProperties;
+  };
+  
+  Accessors._setProperty = function(model, name, value, cb) {
+    var old = model[name];
+    if (old != value) {
+      model[name] = value;
+      if (this[cb]) {
+        this[cb](value, old);
+      }
+    }
+  }
+  
+  Accessors.makeAccessors = function(obj, p) {
+    var pcb = p + 'Changed';
+    Object.defineProperty(obj, p, {
+      get: function() {
+        return this._data[p];
+      },
+      set: function(value) {
+        this._setProperty(this._data, p, value, pcb);
+      }
+    })
+  };
+  
+  Polymer.Accessors = Accessors;
+  
+})();
+</script>

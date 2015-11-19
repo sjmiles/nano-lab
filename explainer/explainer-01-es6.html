@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>Explainer ES6</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+  
+  <script src="/components/webcomponents-lite.min.js"></script>
+  
+  <link rel="import" href="../components/polymer/polymer-nano.html">
+  <!-- 
+    by separating the following code into an import, we can ensure execution 
+    order on platforms that don't support HTMLImports natively, while 
+    ensuring that document parsing is unblocked.
+  -->
+  <link rel="import" href="explainer-01-es6-elements.html">
+
+</head>
+<body>
+
+  <h1>n&Aring;noPolymer</h1>
+
+  <x-foo-1></x-foo-1>
+  <hr>  
+  
+  <x-foo-2></x-foo-2>
+  <hr>  
+
+</body>
+</html>

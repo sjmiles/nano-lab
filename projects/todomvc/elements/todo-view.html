@@ -1,0 +1,106 @@
+<template id="todo-view">
+
+  <nano-router on-route-changed="onUpdateRoute"></nano-router>
+
+  <todo-model id="model"></todo-model>
+  
+  <section id="todoapp">
+    
+    <header id="header">
+      <todo-input inputid="new-todo" placeholder="What needs to be done?" on-todo-commit="addTodoAction" on-todo-cancel="cancelAddTodoAction"></todo-input>
+    </header>
+
+    <section id="main">
+      <input id="toggle-all" type="checkbox" checked="{{allCompleted}}" on-change="toggleAllCompletedAction">
+      <label for="toggle-all">Mark all as complete</label>
+      <ul id="todo-list" on-todo-destroy="onTodoDestroy"></ul>
+    </section>
+
+    <footer id="footer">
+      
+      <span id="todo-count">
+        <strong>{{activeCount}}</strong> left
+      </span>
+
+      <div id="filters">
+        <li>
+          <a id="all" href="?">All</a>
+        </li>
+        <li>
+          <a id="active" href="?active">Active</a>
+        </li>
+        <li>
+          <a id="completed" href="?completed">Completed</a>
+        </li>
+      </div>
+
+      <button id="clear-completed" on-tap="clearCompletedAction">Clear completed</button>
+
+    </footer>
+
+  </section>
+  
+</template>  
+
+<script>
+  Nano({
+    name: 'todo-view',
+    sugar: {
+      properties: ['route', 'items'],
+      template: document.currentImport.querySelector('#todo-view')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.items = []; //{title: "Do Stuff"}, {title: "Do Stuff"}, {title: "Do Stuff"}, {title: "Do Stuff"}, {title: "Do Stuff"}];
+      },
+      onUpdateRoute: function(e) {
+        var route = e.detail.route || 'all';
+        ['all', 'active', 'completed'].forEach(function(s) {
+          this.$[s].classList.toggle('selected', route == s);
+        }, this);
+      },
+      update: function() {
+        this.itemsChanged(this.items);
+      },
+      addTodoAction: function(e) {
+        this.items.push({title: e.detail.value});
+        this.cancelAddTodoAction(e);
+        this.update();
+      },
+			cancelAddTodoAction: function(e) {
+        e.currentTarget.$$('input').value = '';
+			},
+      onTodoDestroy: function(e) {
+        var item = e.detail.item;
+        var i = this.items.indexOf(item);
+        this.items.splice(i, 1);
+        this.update();
+      },
+      itemsChanged: function(items) {
+        this.$.main.hidden = this.$.footer.hidden = (items.length === 0);
+        this.renderItems(this.items, this.$$("#todo-list"));
+        this.$.model.items = this.items;
+        this.renderItemsInfo(this.$.model);
+      },
+      renderItems: function(items, target) {
+        target.textContent = '';
+        items.forEach(function(i) {
+          var li = Polymer.Utils._('li');
+          var item = li.appendChild(Polymer.Utils._('todo-item'));
+          item.item = i;
+          item.addEventListener('todo-changed', function(e) {
+            this.itemsChanged(this.items);
+          }.bind(this));
+          target.appendChild(li);
+        }, this);
+      },
+      renderItemsInfo: function(model) {
+        var ac = model.getActiveCount();
+        this.updateBindings('activeCount', ac + (ac === 1 ? ' item' : ' items'));
+        var cc = model.getCompletedCount();
+        this.$['clear-completed'].style.display = cc ? '' : 'none';
+      }
+    }
+  });
+</script>

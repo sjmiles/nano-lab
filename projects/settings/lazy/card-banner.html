@@ -1,0 +1,43 @@
+<style>
+  
+  card-banner {
+    display: block;
+    padding: 16px;
+    border-bottom: 1px solid #eeeeee;
+    background-color: #fbfbfb;
+  }
+
+</style>
+
+<template id="card-banner">
+
+  <div banner horizontal center layout>
+    <icon></icon><space></space><span>{{label}}</span>
+  </div>
+
+</template>
+
+<script>
+
+  Nano({
+    name: 'card-banner',
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.lazyProperty('icon');
+        this.lazyProperty('label');
+      },
+      iconChanged: function(icon) {
+        this.$$('icon').setAttribute(icon || 'settings', '');
+      },
+      labelChanged: function(label) {
+        this.updateBindings('label', label);
+      }
+    },
+    sugar: {
+      properties: ['icon', 'label'],
+      template: document.currentImport.querySelector('#card-banner')
+    }
+  });
+  
+</script>

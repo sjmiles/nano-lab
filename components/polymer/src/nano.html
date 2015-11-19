@@ -1,0 +1,61 @@
+<script>
+(function() {
+
+  var Nano = function(info) {
+    var ctor = info.class;
+    if (!ctor) {
+      ctor = {prototype: info.prototype};
+    }
+    Nano.sugar(ctor, info.sugar);
+    // TODO(sjmiles): do this or not?
+    document.registerElement(info.name, ctor);
+    return ctor;
+  };
+  
+  Nano.sugar = function(ctor, sugar) {
+    var p = ctor.prototype;
+    Nano.sugarCreatedCallback(p);
+    if (sugar) {
+      if (sugar.properties) {
+        Nano.addInitializer(p, Polymer.Accessors.sugarProperties(ctor, sugar.properties));
+      }
+      if (sugar.template) {
+        Nano.addInitializer(p, Polymer.Annotations.sugarMarkup(ctor, sugar.template));
+      }
+    }
+  };
+
+  Nano.sugarCreatedCallback = function(p) {
+    var st = p._stampTemplate || Nano.stampTemplate;
+    var cb = p.createdCallback;
+    p.createdCallback = function() {
+      this.root = this;
+      st.call(this, this.template);
+      this.__desugar();
+      cb && cb.call(this);
+    };
+    p.__desugar = Nano.initialize;
+  };
+
+  Nano.initialize = function() {
+    var i$ = this.__initializers;
+    i$ && i$.forEach(function(i) {
+      i.call(this);
+    }, this);
+  };
+  
+  Nano.addInitializer = function(obj, i) {
+    (obj.__initializers || (obj.__initializers = [])).push(i);
+  };
+    
+  Nano.stampTemplate = function(template) {
+    if (template) {
+      this.root.appendChild(Polymer.Utils.stampTemplate(template));
+    }
+  };
+  
+  // exports
+  window.Nano = Polymer.Nano = Nano;
+  
+})();
+</script>

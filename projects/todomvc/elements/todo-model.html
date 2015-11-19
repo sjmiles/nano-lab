@@ -1,0 +1,48 @@
+<script>
+  Polymer.Nano({
+    name: 'todo-model',
+    sugar: {
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      _initializeDefaultTodos: function () {
+        this.items = [];
+      },
+      newItem: function(title) {
+        this.push('items', {title: title, completed: false});
+      },
+      getCompletedCount: function () {
+        return this.items ? this.items.filter(this.filters.completed).length : 0;
+      },
+      getActiveCount: function () {
+        return this.items ? (this.items.length - this.getCompletedCount(this.items)) : 0;
+      },
+      matchesFilter: function(item, filter) {
+        var fn = this.filters[filter];
+        return fn ? fn(item) : true;
+      },
+      destroyItem: function(item) {
+        var i = this.items.indexOf(item);
+        if (i > -1) {
+          this.splice('items', i, 1)
+        }
+      },
+      clearCompletedItems: function () {
+        this.items = this.items.filter(this.filters.active);
+      },
+      setItemsCompleted: function(completed) {
+        for (var i = 0; i < this.items.length; ++i) {
+          this.set(['items', i, 'completed'], completed);
+        }
+      },
+      filters: {
+        active: function(item) {
+          return !item.completed;
+        },
+        completed: function(item) {
+          return item.completed;
+        }
+      }
+    }
+  });
+</script>

@@ -1,0 +1,23 @@
+<script>
+  Nano({
+    name: 'crumb-bar',
+    sugar: {
+      properties: ['routes']
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.lazyProperty('routes');        
+      },
+      routesChanged: function(routes) {
+        var $_ = Nano.translate;
+        var url = [];
+        var crumbs = routes.map(function(r, value) {
+          url.push(r);
+          return '<a href="?' + url.join('/') + '">' + $_(r) + '</a>';
+        });
+        this.innerHTML = crumbs.join(' > ');
+      }
+    }
+  });
+</script>

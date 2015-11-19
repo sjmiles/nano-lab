@@ -1,0 +1,66 @@
+<nano-import href="lazy/card-banner.html"></nano-import>
+
+<style>
+  card-material {
+    display: block;
+    background-color: white;
+    min-height: 400px;
+    margin: 0 8px;
+    transition: top 500ms, right 500ms, bottom 500ms, left 500ms !important;
+  }
+  card-material[prefixed] {
+    top: 400px;
+    right: 400px;
+    bottom: 400px;
+    left: 400px;
+  }
+  card-material[fixed] {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+</style>
+
+<template id="content-card">
+  <card-material shadow>
+    <card-banner label="{{name}}" icon="{{icon}}" on-maximize="maximo"></card-banner>
+    <div id="content"></div>
+  </card-material>
+</template>
+
+<script>
+  Nano({
+    name: 'content-card',
+    sugar: {
+      template: document.currentImport.querySelector('#content-card')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.$.content.appendChild(Polymer.Utils._(this.getAttribute('kind')));
+        this.updateBindings('name', Nano.translate(this.getAttribute('name')));
+        this.updateBindings('icon', this.getAttribute('icon'));
+      },
+      maximo: function() {
+        var ss = this._scrollStash;
+        this._scrollStash = document.body.scrollTop;
+        //
+        var cm = this.$$('card-material');
+        var onoff = !cm.hasAttribute('fixed');
+        cm.style.position = onoff ? 'fixed' : 'static';
+        Polymer.Utils.boolAttribute(cm, 'prefixed', onoff);
+        Polymer.Utils.boolAttribute(cm, 'fixed', false);
+        requestAnimationFrame(function() {
+          document.body.scrollTop = ss || 0;
+        });
+        //
+        var cm = this.$$('card-material');
+        setTimeout(function() {
+          Polymer.Utils.boolAttribute(cm, 'fixed', onoff);
+          Polymer.Utils.boolAttribute(cm, 'prefixed', false);
+        }, 100);
+      }
+    }
+  });
+</script>

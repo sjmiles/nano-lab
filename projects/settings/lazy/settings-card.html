@@ -1,0 +1,34 @@
+<nano-import href="lazy/card-banner.html"></nano-import>
+
+<style>
+  settings-card card-material {
+    display: block;
+    background-color: white;
+    min-height: 400px;
+    margin: 0 8px;
+  }
+</style>
+
+<template id="settings-card">
+  <card-material shadow>
+    <card-banner label="{{name}}" icon="{{icon}}"></card-banner>
+    <div id="content"></div>
+  </card-material>
+</template>
+
+<script>
+  Nano({
+    name: 'settings-card',
+    sugar: {
+      template: document.currentImport.querySelector('#settings-card')
+    },
+    prototype: {
+      __proto__: Polymer.BaseElement.prototype,
+      createdCallback: function() {
+        this.$.content.appendChild(Polymer.Utils._(this.getAttribute('kind')));
+        this.updateBindings('name', Nano.translate(this.getAttribute('name')));
+        this.updateBindings('icon', this.getAttribute('icon'));
+      }
+    }
+  });
+</script>

@@ -1,0 +1,67 @@
+<script>
+
+  Annotator = function() {
+    this._annotators = []
+  };
+
+  Annotator.prototype = {
+    
+    addAnnotator: function(a) {
+      this._annotators.push(a);
+    },
+
+    annotate: function(node, parent, index, root) {
+      var notes = this.annotateNode(node, parent, index, root);
+      this.annotateChildren(node, notes, notes.root);
+      return notes;
+    },
+
+    annotateNode: function(node, parent, index, root) {
+      var notes = Object.create(null);
+      // first `notes` is `root`
+      notes.root = root || notes;
+      notes.parent = parent;
+      notes.index = index;
+      this._annotators.forEach(function(a) {
+        // TODO(sjmiles):
+        // `a` may have removed `node` in which case we probably want to stop processing
+        // and discard `notes` (or disallow `a` doing this)
+        // If a previous `a` processed this node, it may have stored state externally
+        // (or disallow `a` doing this)
+        a(node, notes, notes.root);
+      });
+      return notes;
+    },
+
+    annotateChildren: function(node, notes, root) {
+      var child = node.firstChild;
+      if (child) {
+        var children = notes.children = [];
+      }
+      var previous = null;
+      var i = 0;
+      while (child) {
+        // recurses here
+        children.push(this.annotate(child, notes, i++, root));
+        //
+        // TODO(sjmiles): we support subtree modification, but nodes may be annotated before removal which
+        // is suboptimal, or worse, non-functional if annotators save state outside of annotations. See
+        // notes in `annotateNode`
+        //
+        // subtree may have been modified by annotator
+        previous = previous ? previous.nextSibling : node.firstChild;
+        child = (previous === child) ? previous.nextSibling : previous;
+      }
+    },
+    
+    findInstanceNode: function(notes, root) {
+      if (!notes.parent) {
+        return root;
+      }
+      var node = this.findInstanceNode(notes.parent, root);
+      return node.childNodes[notes.index];
+    }
+
+  };
+
+</script>
