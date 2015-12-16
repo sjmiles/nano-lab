@@ -15,36 +15,97 @@
   
   <link rel="import" href="../components/polymer/polymer-nano.debug.html">
 
+  <!-- CHROME ONLY -->
+  
 </head>
 <body>
 
   <h1>n&aring;noPolymer</h1>
 
   <x-foo-1></x-foo-1>
-
-  <template id="x-foo">
-    <b>{{localName}}</b> says "<span>{{msg}}</span>" (<button on-click="click">Say Hello</button>)
-  </template>
-  
-  <script>
-   'use strict';
-    document.registerElement('x-foo-1', {
-      prototype: {
-        __proto__: HTMLElement.prototype,
-        createdCallback: function() {
-          this.dom = Annotations.stamp(document.querySelector('template#x-foo'), this);
-          this.dom.set({localName: this.localName});
-          this.msg = 'I Live';
-        },
-        set msg(msg) {
-          this.dom.set('msg', msg);
-        },
-        click: function() {
-          this.msg = 'Hello yourself!';
+ 
+  <dom-module id="x-foo">
+    <template>
+      <b>{{localName}}</b> says 
+      <!-- style% represents a binding to the style object, if you `set` an object to style% the properties
+           are copied to the element's style (uses JS naming) -->
+      "<span style%="{{nameStyle}}">{{msg}}</span>" 
+      <!-- `{{$<text>}}` syntax defines a translation entity which is passed through a translation hook at stamping time
+           by default it simply echoes `<text>`.
+           TODO(sjmiles): do we need a way to reprocess all translation entities later? -->
+      (<button title="{{$Click to Say Hello}}" on-click="onClick">{{$Say Hello}}</button>)
+    </template>
+    <script>
+     'use strict';
+      // nano principle #1: favor unsugared platform APIs
+      document.registerElement('x-foo-1', {
+        prototype: {
+          // ES5 syntax for `extends` (incompatible with older IE)
+          __proto__: HTMLElement.prototype,
+          createdCallback: function() {
+            // TODO(sjmiles): what namespace for Annotation engine?          
+            // first argument is a template instance or the name of a dom-module containing a template
+            // second argument is the root container
+            // third argument is the event-handler context, if not supplied, the container is used 
+            // returns an object with API to reference the stamped DOM
+            this.dom = Annotations.stamp('x-foo', this);
+            // `set` pushes data to DOM bindings, can pass a map of name value pairs `set(map)` 
+            // or a single name/value `set(name, value)`
+            this.dom.set({localName: this.localName});
+            this.msg = 'I Live';
+          },
+          set msg(msg) {
+            this.dom.set('msg', msg);
+          },
+          onClick: function() {
+            this.msg = 'Hello yourself!';
+            this.dom.set('nameStyle', {color: 'orange'});
+          }
         }
-      }
-    });   
-  </script>
+      });   
+    </script>
+  </dom-module>
+  
+  <hr>
+  
+  <!-- using Nano.distribute -->
+  
+  <!-- `span` is intended to distribute to slot "name" in `x-slotted` -->
+  <x-slotted><span slot="name">Slotted Element</span></x-slotted>
+  
+  <dom-module id="x-slotted">
+    
+    <template>
+      <b><slot name="name"></slot></b> says "<span>{{msg}}</span>"
+    </template>
+    
+    <script>
+     'use strict';
+      document.registerElement('x-slotted', {
+        prototype: {
+          __proto__: HTMLElement.prototype,
+          // wait for `attachedCallback` so children are instantiated
+          attachedCallback: function() {
+            // TODO(sjmiles): the annotator currently requires an empty container, so we have to pool our children
+            // before stamping. There are a number of ways around this but KISS for now.
+            var pool = Nano.pool(this);
+            this.dom = Annotations.stamp('x-slotted', this);
+            // imperative distribution
+            // TODO(sjmiles): slots are destroyed by distribution. As of now, if you need to redistribute
+            // you must restamp the template.
+            Nano.distribute(pool, this);
+            // now ready for data binding
+            this.dom.set({localName: this.localName});
+            this.msg = 'I Live';
+          },
+          set msg(msg) {
+            this.dom.set('msg', msg);
+          }
+        }
+      });   
+    </script>
+    
+  </dom-module>
   
   </body>
 </html>

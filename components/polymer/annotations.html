@@ -40,6 +40,10 @@
       notes = template._notes = annotator.annotate(template.content);
       //console.log('annotations:', notes);
     }
+    // TODO(sjmiles): container must be empty for the node locator to function.
+    // Consider stamping instead into a document fragment and locating all
+    // nodes of interest as a preprocess step.
+    //container.textContent = '';
     // clone nodes
     container.appendChild(document.importNode(template.content, true));
     // attach listeners
