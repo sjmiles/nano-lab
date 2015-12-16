@@ -1,0 +1,44 @@
+<dom-module id="article-view">
+  <style>
+    article-view {
+      display: block;
+      text-align: left;
+    }
+  </style>
+
+  <template>
+    <header>
+      <a target="_blank" href="{{link}}">
+        <span>{{title}}</span>
+      </a>
+      <div>{{author}}</div>
+    </header>
+    <section id="main"></section>
+  </template>
+
+  <script>
+
+    document.registerElement('article-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.root = Annotations.stamp('article-view', this);
+          Nano.property(this, 'article');
+          Nano.property(this, 'active');
+        },
+        set active(active) {
+          if (active) {
+            this.render(this.article);
+          }
+        },
+        render: function(article) {
+          if (article) {
+            this.root.set({title: article.title, author: article.author, link: article.link});
+            this.root.$('#main').innerHTML = article.description;
+          }
+        }
+      }
+    });
+
+  </script>
+</dom-module>

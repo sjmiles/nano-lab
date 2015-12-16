@@ -1,0 +1,55 @@
+<style>
+  nano-carousel {
+    display: block;
+    position: relative;
+  }
+  nano-carousel > * {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: transform 300ms ease-in-out;
+  }
+</style>
+
+<script>
+  'use strict';
+  document.registerElement('nano-carousel', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.addEventListener('click', this.click.bind(this));
+      },
+      attachedCallback: function() {
+        this.x = -5;
+        this.update();
+        this.click();
+      },
+      click: function() {
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+        } else {
+          this.interval = setInterval(function() {
+            this.x++;
+            if (this.x > 0) {
+              this.x = -5;
+            }
+            this.update();
+          }.bind(this), 3000);
+        }
+      },
+      update: function() {
+        var e = this.firstElementChild;
+        var x = this.x * 100;
+        while (e) {
+          e.style.transform = 'translate3d(' + x + '%, 0, 0)';
+          x += 100;
+          e = e.nextElementSibling;
+        }
+      }
+    }
+  });   
+</script>

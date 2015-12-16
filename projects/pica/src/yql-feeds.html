@@ -1,0 +1,21 @@
+<script>
+  
+  var prefix = 'https://query.yahooapis.com/v1/public/yql?q='
+  var suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=yqlCallback';
+  var gcb = null;
+  
+  var feedService = {
+    fetch: function(feed, cb) {
+      gcb = cb;
+      var s = document.createElement('script');
+      s.src = prefix + encodeURIComponent('select * from rss where url="' + feed + '"') + suffix;
+      document.body.appendChild(s);
+    }
+  };
+  
+  var yqlCallback = function(data) {
+    console.log(data);
+    gcb(data.query.results);
+  };
+
+</script>

@@ -1,0 +1,62 @@
+<style>
+  [is=nano-anchor] {
+    padding: 12px 24px;
+    border: none;
+    font: inherit;
+    background-color: transparent;
+    text-decoration: none;
+    display: inline-block;
+    color: inherit;
+  }
+  [is=nano-anchor]:focus {
+    outline: none;
+    /*
+    font-weight: bold;
+    text-decoration: none;
+    */
+    color: #008ae6;
+  }
+</style>
+
+<script>
+  'use strict';
+  document.registerElement('nano-anchor', {
+    extends: 'a',
+    prototype: {
+      __proto__: HTMLAnchorElement.prototype,
+      createdCallback: function() {
+        this.href = 'javascript:void(0)';
+        this.addEventListener('mousedown', this.down.bind(this));
+        this.addEventListener('click', this.click.bind(this));
+      },
+      needRipple: function() {
+        if (!this.ripple) {
+          this.ripple = document.createElement('nano-ripple');
+          this.ripple.color = 'navy';
+        }
+        return this.ripple;
+      },
+      finishWave: function() {
+        if (this.wave) {
+          this.wave.finish();
+          this.wave = null;
+        }
+      },
+      down: function(e) {
+        if (!this.wave) {
+          this.wave = this.needRipple().mouseripple(e);
+          setTimeout(function() {
+            this.finishWave();
+          }.bind(this), 3000)
+        }
+      },
+      click: function(e) {
+        if (this.wave) {
+          this.finishWave();
+        } else {
+          this.needRipple().mouseripple(e).finish();
+        }
+      }
+    }
+  });   
+</script>

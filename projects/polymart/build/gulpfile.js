@@ -5,29 +5,21 @@ var minifyInline = require('gulp-minify-inline');
 var minifyOptions = {
   //js: false
 };
-  
+   
 var criticalSegment = [
-  // polymer nano
   '../../../components/polymer/polymer-nano.html',
-  // components
+  '../../../components/nano-elements/nano-import.html',
   '../../../components/nano-elements/nano-layout.html',
   '../../../components/nano-elements/nano-ripple.html',
   '../../../components/nano-elements/nano-anchor.html',
-  // assets
   '../../../components/icons-simple.html',
-  // data
-  '../views.html',
-  '../translate.html',
-  // views
-  '../src/settings-view.html',
-  '../src/people-view.html',
-  '../src/on-startup-view.html',
-  '../src/appearance-view.html'
+  '../src/polymart-view.html',
+  '../src/home-view.html'
 ];
 
 gulp.task('default', function() {
   return gulp.src(criticalSegment)
-    .pipe(concat('critical.html'))
+    .pipe(concat('critical.build.html'))
     .pipe(minifyInline(minifyOptions))
     .pipe(gulp.dest('../'))
   ;

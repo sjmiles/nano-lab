@@ -1,0 +1,104 @@
+<style>
+  people-view {
+    display: block;
+  }
+  people-view slug {
+    display: block;
+    padding: 24px;
+  }
+  people-view rule {
+    display: block;
+    border-bottom: 1px solid #f3f3f3;
+  }
+  people-view a {
+    text-decoration: none;
+  }
+  people-view [is=nano-anchor] {
+    text-transform: uppercase;
+  }
+  people-view avatar-view {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    border-radius: 48px;
+    border: 1px solid silver;
+    background: whitesmoke url("") center no-repeat;    
+    background-size: cover;
+    margin-right: 24px;
+  }
+  people-view [m] {
+    background-image: url("../assets/m_10.png");    
+  }
+  people-view [f] {
+    background-image: url("../assets/f_04.png");    
+  }
+  people-view [main] {
+    font-weight: bold;
+  }
+  people-view [secondary] {
+    color: #888888;
+  }
+</style>
+
+<template id="people-view">
+  
+  <slug><span>{{$AboutSignIn}}</span> <a href="javascript:void(0)">{{$Learn more}}</a></slug>
+  
+  <rule></rule>
+  
+  <div horizontal center layout>
+    <span flex></span>
+    <a is="nano-anchor">{{$Sign In To Chrome}}</a>
+  </div>
+  
+  <rule></rule>
+  
+  <slug>
+
+    <div horizontal center layout>
+      <avatar-view f></avatar-view>
+      <div flex>
+        <div main>Jane <span>{{$(current)}}</span></div>
+        <div secondary>janedoe@google.com</div>
+      </div>
+      <a is="nano-anchor">{{$Sign Out}}</a>
+    </div> 
+    <br>
+
+    <div horizontal center layout>
+      <avatar-view m></avatar-view>
+      <div flex>
+        <div main>John</div>
+        <div secondary>johndoe@google.com</div>
+      </div>
+    </div> 
+
+  </slug>
+  
+  <rule></rule>
+  
+  <slug>
+    <div main>{{$Sync}}</div>
+    <div secondary>{{$On}}</div>
+  </slug>
+  
+  <rule></rule>
+  
+  <div>
+    <a is="nano-anchor">{{$Manage Other People}}</a>
+  </div>
+
+</template>
+
+<script>
+  'use strict';
+  document.registerElement('people-view', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      template: document.currentImport.querySelector('template#people-view'),
+      createdCallback: function() {
+        this._dom = Annotations.stamp(this.template, this, this);
+      }
+    }
+  });
+</script>

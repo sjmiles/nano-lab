@@ -1,0 +1,38 @@
+<script>
+(function() {
+  
+  var corpi = {
+    en: {
+      "AboutSignIn": "Sign in to get your bookmarks, history, passwords, and other settings on all your devices. You'll also automatically be signed in to your Google services."
+    },
+    es: {
+      "Advanced": "Avanzada",
+      "Basic": "Básico",
+      "Internet connection": "Conexión a Internet",
+      "Wifi network": "Red Wifi",
+      "Appearance": "Aparición",
+      "People": "Gente",
+      "Passwords": "Contraseñas",
+      "Known networks": "Redes de Conocimiento",
+      "Join other": "Únete a otra"
+    }
+  };
+  
+  //var locale = 'es';
+  var locale = 'en';
+
+  var corpus = corpi[locale];
+  
+  // translation operator
+  Nano.translate = function(m) {
+    return corpus[m] || m;
+  };
+
+  Nano.bindx = function(context, t$) {
+    t$.forEach(function(t) {
+     context.set(t, Nano.translate(t)); 
+    });
+  };
+  
+})();
+</script>

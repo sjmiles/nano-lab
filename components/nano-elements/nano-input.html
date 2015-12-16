@@ -1,0 +1,60 @@
+<style>
+  [is=nano-input] {
+    padding: 8px 1px;
+    border: none;
+    border-bottom: 1px solid silver;
+    margin-bottom: 1px;
+  }
+  [is=nano-input]:focus {
+    outline: none;
+  }
+  [is=nano-input][focused] {
+    border-bottom: 2px solid navy;
+  }
+</style>
+
+<script>
+  'use strict';
+  class NanoInput extends HTMLInputElement {
+    createdCallback() {
+      this.placeholder = 'I say, wot?';
+      Nano.listen(this, ['mousedown', 'keyup', 'keypress', 'focus', 'blur'], this);
+    }
+    onMousedown(e) {
+      this._lastX = e.offsetX;
+    }
+    onKeyUp(e) {
+      // ESC
+      if (e.keyCode === 27) {
+        this.value = '';
+      }
+    }
+    onKeyPress(e) {
+      // ENTER
+      if (e.keyCode === 13) {
+        this.value = '';
+      }
+    }
+    onFocus(e) {
+      this.focused = true;
+      if (!this.ripple) {
+        this.ripple = document.createElement('nano-ripple');
+      }
+      var r = this.getBoundingClientRect();
+      var clip = this.ripple.ripple(this, this._lastX || 16, 24, 'navy', {top: r.top + r.height - 1, left: r.left, height: 4, width: r.width});
+      clip.finish();
+      var cb = () => {
+        if (this.focused) {
+          this.setAttribute('focused', '');
+        }
+      };
+      setTimeout(cb, 200);
+    }
+    onBlur(e) {
+      this.focused = false;
+      this.removeAttribute('focused');
+    }
+  };
+  NanoInput.extends = 'input';
+  document.registerElement('nano-input', NanoInput);   
+</script>

@@ -1,0 +1,138 @@
+<script>Annotator=function(){this._annotators=[]},Annotator.prototype={addAnnotator:function(n){this._annotators.push(n)},annotate:function(n,t,o,a){var r=this.annotateNode(n,t,o,a);return this.annotateChildren(n,r,r.root),r},annotateNode:function(n,t,o,a){var r=Object.create(null);return r.root=a||r,r.parent=t,r.index=o,this._annotators.forEach(function(t){t(n,r,r.root)}),r},annotateChildren:function(n,t,o){var a=n.firstChild;if(a)var r=t.children=[];for(var i=null,e=0;a;)r.push(this.annotate(a,t,e++,o)),i=i?i.nextSibling:n.firstChild,a=i===a?i.nextSibling:i},findInstanceNode:function(n,t){if(!n.parent)return t;var o=this.findInstanceNode(n.parent,t);return o.childNodes[n.index]}};</script>
+<script>!function(){var n={},t=new Annotator;n.stamp=function(e,i,o){var a=e._notes;return a||(a=e._notes=t.annotate(e.content)),i.appendChild(document.importNode(e.content,!0)),o&&n.listen(i,a,o),n.xlate(i,a),{set:function(t,e){n.set(i,a,t,e)}}},n.set=function(n,t,o,a){void 0===a?i(n,t,o):e(n,t,o,a)};var e=function(n,t,e,i){a(n,t.textBindings,e,function(n,t){t.innerText=i}),a(n,t.propBindings,e,function(n,t){t[n.lhs]=i})},i=function(n,t,i){for(var o in i)e(n,t,o,i[o])};n.listen=function(n,t,e){a(n,t,"events",function(n,t){o(t,n.name,e,n.handler)})};var o=function(n,t,e,i){n.addEventListener(t,function(){e[i]?e[i]():console.warn("handler `"+i+"` for event `"+t+"` not defined on host `"+(e&&e.localName)+"`")})};n.xlate=function(t,e){for(var i in e.xlateBindings)n.set(t,e,"$"+i,Nano.translate(i))};var a=function(n,t,e,i){var o=t&&t[e];o&&o.forEach(function(t){i(t,s(t.notes,n))})},s=function(n,e){return e?t.findInstanceNode(n,e):void console.warn("Annotation::findInstanceNode: null `root` parameter")},r=function(n,t){if(n.hasAttributes){for(var e,i,o=[],a=n.attributes,s=a.length-1;s>=0;s--)e=a[s],i=t(e.name,e.value),i&&o.push(i);return o.length?o:void 0}},c=[function(n,t,e){if(n.id){var i=e.ids||(e.ids=[]);i.push({id:n.id,notes:t})}},function(n,t,e){if(n.nodeType===n.ELEMENT_NODE){if(0===n.childElementCount){var i=n.textContent;if("{{"===i.slice(0,2)){var o=i.slice(2,-2),a=e.textBindings||(e.textBindings={}),s=a[o]||(a[o]=[]);if(s.push({notes:t}),"$"===o[0]){var c=e.xlateBindings||(e.xlateBindings={});c[o.slice(1)]=!0}n.textContent=""}}var d=e.propBindings||(e.propBindings={});r(n,function(e,i){if("{{"===i.slice(0,2)){var o=i.slice(2,-2),a=d[o]||(d[o]=[]);a.push({lhs:e,notes:t}),n.removeAttribute(e)}})}},function(n,t,e){if(n.nodeType===n.ELEMENT_NODE){var i=r(n,function(n,e){return"on-"===n.slice(0,3)?{name:n.slice(3),handler:e,notes:t}:void 0});i&&(e.events=e.events?e.events.concat(i):i)}}];c.forEach(t.addAnnotator.bind(t)),window.Annotations=n}();</script>
+<script>!function(){Accessors={},Accessors["for"]=function(s,e){var r=Object.getPrototypeOf(s);r._accessors||(Accessors.sugarProperties({prototype:r},e),r._accessors=!0),s._data=Object.create(null)},Accessors.desugarProperties=function(){this._data=Object.create(null)},Accessors.sugarProperties=function(s,e){var r=s.prototype;r._setProperty=Accessors._setProperty;for(var t=0,c=e.length;c>t;t++)Accessors.makeAccessors(r,e[t]);return Accessors.desugarProperties},Accessors._setProperty=function(s,e,r,t){var c=s[e];c!=r&&(s[e]=r,this[t]&&this[t](r,c))},Accessors.makeAccessors=function(s,e){var r=e+"Changed";Object.defineProperty(s,e,{get:function(){return this._data[e]},set:function(s){this._setProperty(this._data,e,s,r)}})}}();</script>
+<script>Object.defineProperty(document,"currentImport",{enumerable:!0,configurable:!0,get:function(){return(document._currentScript||document.currentScript).ownerDocument}}),window.Nano={property:function(t,e){var n;if(t.hasOwnProperty(e))n=this[e],delete this[e];else{if(!t.hasAttribute(e))return;n=t.getAttribute("name")}this[e]=n},boolAttribute:function(t,e,n){void 0===n&&(n=!t.hasAttribute(e)),t[n?"setAttribute":"removeAttribute"](e,"")},listen:function(t,e,n){e.forEach(function(e){var r="on"+e[0].toUpperCase()+e.slice(1),o=n[r];o?(o=o.bind(n),t.addEventListener(e,o)):console.warn("Nano.listen: method [%s] not found on [%s]",r,t.localName)})}};</script>
+<style>[layout][horizontal],[layout][vertical]{display:-ms-flexbox;display:-webkit-flex;display:flex}[layout][horizontal]{-ms-flex-direction:row;-webkit-flex-direction:row;flex-direction:row}[layout][vertical]{-ms-flex-direction:column;-webkit-flex-direction:column;flex-direction:column}[layout][center]{-ms-flex-align:center;-webkit-align-items:center;align-items:center}[layout][middle]{-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center}[flex]{-ms-flex:1 1 0px;-webkit-flex:1;-webkit-flex-basis:0px;flex:1;flex-basis:0px}[noflex]{-ms-flex:none;-webkit-flex:none;flex:none}[shadow]{position:relative;-webkit-box-shadow:0 2px 13px -1px rgba(0,0,0,.52);-moz-box-shadow:0 2px 13px -1px rgba(0,0,0,.52);box-shadow:0 2px 13px -1px rgba(0,0,0,.52)}[fixed]{position:fixed;left:0;top:0;bottom:0;right:0;box-sizing:border-box;transition:transform .1s ease-out}space{display:inline-block;width:16px}</style>
+<style>ripple-clip,ripple-wave{pointer-events:none;display:inline-block}ripple-clip{position:fixed;box-sizing:border-box;overflow:hidden}ripple-wave{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:1024px;transform:scale(0);opacity:.5;transition:transform 250ms ease-in-out,opacity .3s ease-in-out}</style>
+
+<script>"uses strict;";var prototype={__proto__:HTMLElement.prototype,createdCallback:function(){this.color="#bbbbbb",this.layer=document.body},makeClip:function(t){var e=document.createElement("ripple-clip");return e.style.top=t.top+"px",e.style.width=t.width+"px",e.style.height=t.height+"px",e.style.left=t.left+"px",e.r=t,e},makeWave:function(t,e,i){var n=document.createElement("ripple-wave"),o=Math.min(t.width,t.height),a=(Math.max(t.width,t.height),o/2),r=Math.abs(e-t.width/2),l=(t.width+2*r)/o,p=Math.abs(i-t.height/2),s=(t.height+2*p)/o;return n.scale=Math.round(Math.max(l,s)+1.5),n.style.top=i-a+"px",n.style.width=o+"px",n.style.height=o+"px",n.style.left=e-a+"px",n.style.opacity=.5,n},waveout:function(t){t.style.transform="scale("+t.scale+")",t.style.transition=""},animate:function(t){var e=this.waveout;setTimeout(function(){e(t)},1)},wave:function(t,e,i){return t.appendChild(this.makeWave(t.r,e,i))},ripple:function(t,e,i,n,o){var a=this.makeClip(o||t.getBoundingClientRect());this.layer.appendChild(a);var r=this.wave(a,e,i);return r.style.backgroundColor=n,this.animate(r),a.finish=function(){setTimeout(function(){r.style.opacity=0},1),setTimeout(function(){a.remove()},250)},a},mouseripple:function(t){return this.ripple(t.currentTarget,t.offsetX,t.offsetY,this.color)}};document.registerElement("nano-ripple",{prototype:prototype});</script>
+
+<style>[is=nano-anchor]{padding:12px 24px;border:none;font:inherit;background-color:transparent;text-decoration:none;display:inline-block;color:inherit}[is=nano-anchor]:focus{outline:0;font-weight:700;text-decoration:none;color:#008ae6}</style>
+
+<script>"use strict";document.registerElement("nano-anchor",{"extends":"a",prototype:{__proto__:HTMLElement.prototype,createdCallback:function(){this.href="javascript:void(0)",this.addEventListener("mousedown",this.down.bind(this)),this.addEventListener("click",this.click.bind(this))},needRipple:function(){return this.ripple||(this.ripple=document.createElement("nano-ripple"),this.ripple.color="navy"),this.ripple},finishWave:function(){this.wave&&(this.wave.finish(),this.wave=null)},down:function(i){this.wave||(this.wave=this.needRipple().mouseripple(i),setTimeout(function(){this.finishWave()}.bind(this),3e3))},click:function(i){this.wave?this.finishWave():this.needRipple().mouseripple(i).finish()}}});</script>
+<style>icon{display:inline-block;width:24px;height:24px;-ms-flex:none;-webkit-flex:none;flex:none}icon[menu]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%2018h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z%22%2F%3E%3C%2Fsvg%3E)}icon[key]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12.65%2010C11.83%207.67%209.61%206%207%206c-3.31%200-6%202.69-6%206s2.69%206%206%206c2.61%200%204.83-1.67%205.65-4H17v4h4v-4h2v-4H12.65zM7%2014c-1.1%200-2-.9-2-2s.9-2%202-2%202%20.9%202%202-.9%202-2%202z%22%2F%3E%3C%2Fsvg%3E)}icon[people]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M16%2011c1.66%200%202.99-1.34%202.99-3S17.66%205%2016%205c-1.66%200-3%201.34-3%203s1.34%203%203%203zm-8%200c1.66%200%202.99-1.34%202.99-3S9.66%205%208%205C6.34%205%205%206.34%205%208s1.34%203%203%203zm0%202c-2.33%200-7%201.17-7%203.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8%200c-.29%200-.62.02-.97.05%201.16.84%201.97%201.97%201.97%203.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z%22%2F%3E%3C%2Fsvg%3E)}icon[wifi]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill-opacity%3D%22.3%22%20d%3D%22M12.01%2021.49L23.64%207c-.45-.34-4.93-4-11.64-4C5.28%203%20.81%206.66.36%207l11.63%2014.49.01.01.01-.01z%22%2F%3E%3Cpath%20d%3D%22M3.53%2010.95l8.46%2010.54.01.01.01-.01%208.46-10.54C20.04%2010.62%2016.81%208%2012%208c-4.81%200-8.04%202.62-8.47%202.95z%22%2F%3E%3C%2Fsvg%3E)}icon[settings]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%2010c-1.1%200-2%20.9-2%202s.9%202%202%202%202-.9%202-2-.9-2-2-2zm7-7H5c-1.11%200-2%20.9-2%202v14c0%201.1.89%202%202%202h14c1.11%200%202-.9%202-2V5c0-1.1-.89-2-2-2zm-1.75%209c0%20.23-.02.46-.05.68l1.48%201.16c.13.11.17.3.08.45l-1.4%202.42c-.09.15-.27.21-.43.15l-1.74-.7c-.36.28-.76.51-1.18.69l-.26%201.85c-.03.17-.18.3-.35.3h-2.8c-.17%200-.32-.13-.35-.29l-.26-1.85c-.43-.18-.82-.41-1.18-.69l-1.74.7c-.16.06-.34%200-.43-.15l-1.4-2.42c-.09-.15-.05-.34.08-.45l1.48-1.16c-.03-.23-.05-.46-.05-.69%200-.23.02-.46.05-.68l-1.48-1.16c-.13-.11-.17-.3-.08-.45l1.4-2.42c.09-.15.27-.21.43-.15l1.74.7c.36-.28.76-.51%201.18-.69l.26-1.85c.03-.17.18-.3.35-.3h2.8c.17%200%20.32.13.35.29l.26%201.85c.43.18.82.41%201.18.69l1.74-.7c.16-.06.34%200%20.43.15l1.4%202.42c.09.15.05.34-.08.45l-1.48%201.16c.03.23.05.46.05.69z%22%2F%3E%3C%2Fsvg%3E)}icon[arrow-drop-down]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E)}icon[chevron-down]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M16.59%208.59L12%2013.17%207.41%208.59%206%2010l6%206%206-6z%22%2F%3E%3C%2Fsvg%3E)}icon[chevron-right]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M10%206L8.59%207.41%2013.17%2012l-4.58%204.59L10%2018l6-6z%22%2F%3E%3C%2Fsvg%3E)}icon[done]{background:url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22green%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%2016.2L4.8%2012l-1.4%201.4L9%2019%2021%207l-1.4-1.4L9%2016.2z%22%2F%3E%3C%2Fsvg%3E)}</style>
+<script>window.views=["people","on-startup","appearance","people","on-startup","appearance","people","on-startup","appearance","people","on-startup","appearance","people","on-startup","appearance"];</script>
+<script>!function(){var n={en:{AboutSignIn:"Sign in to get your bookmarks, history, passwords, and other settings on all your devices. You'll also automatically be signed in to your Google services."},es:{Advanced:"Avanzada",Basic:"Básico","Internet connection":"Conexión a Internet","Wifi network":"Red Wifi",Appearance:"Aparición",People:"Gente",Passwords:"Contraseñas","Known networks":"Redes de Conocimiento","Join other":"Únete a otra"}},e="en",o=n[e];Nano.translate=function(n){return o[n]||n},Nano.bindx=function(n,e){e.forEach(function(e){n.set(e,Nano.translate(e))})}}();</script>
+<nano-import href="src/appearance-view.html"></nano-import>
+
+<style>settings-view{display:block;min-width:320px;max-width:620px;margin:0 auto;font-size:.8em}settings-view settings-card{display:block;margin-top:40px;background-color:#fff;line-height:160%}</style>
+
+<script>"use strict";document.registerElement("settings-view",{prototype:{__proto__:HTMLElement.prototype,createdCallback:function(){this.views=[],this.settings=window.settings,window.views&&views.forEach(function(t){var e=document.createElement(t+"-view");e.settings=this.settings,e.addEventListener("settings-changed",this.onSettingsChanged.bind(this)),this.views.push(e);var i=document.createElement("settings-card");i.setAttribute("shadow",""),i.appendChild(e),this.appendChild(i)},this)},onSettingsChanged:function(t){var e=this.settings[t.detail.section];e&&(e[t.detail.setting]=t.detail.value,this.updateViews())},updateViews:function(){var t=this.settings;this.views.forEach(function(e){e.settings=t})}}});</script>
+<style>people-view{display:block}people-view slug{display:block;padding:24px}people-view rule{display:block;border-bottom:1px solid #f3f3f3}people-view a{text-decoration:none}people-view [is=nano-anchor]{text-transform:uppercase}people-view avatar-view{display:inline-block;width:48px;height:48px;border-radius:48px;border:1px solid silver;background:url() center no-repeat #f5f5f5;background-size:cover;margin-right:24px}people-view [m]{background-image:url(../assets/m_10.png)}people-view [f]{background-image:url(../assets/f_04.png)}people-view [main]{font-weight:700}people-view [secondary]{color:#888}</style>
+
+<template id="people-view">
+  
+  <slug><span>{{$AboutSignIn}}</span> <a href="javascript:void(0)">{{$Learn more}}</a></slug>
+  
+  <rule></rule>
+  
+  <div horizontal="" center="" layout="">
+    <span flex=""></span>
+    <a is="nano-anchor">{{$Sign In To Chrome}}</a>
+  </div>
+  
+  <rule></rule>
+  
+  <slug>
+
+    <div horizontal="" center="" layout="">
+      <avatar-view f=""></avatar-view>
+      <div flex="">
+        <div main="">Jane <span>{{$(current)}}</span></div>
+        <div secondary="">janedoe@google.com</div>
+      </div>
+      <a is="nano-anchor">{{$Sign Out}}</a>
+    </div> 
+    <br>
+
+    <div horizontal="" center="" layout="">
+      <avatar-view m=""></avatar-view>
+      <div flex="">
+        <div main="">John</div>
+        <div secondary="">johndoe@google.com</div>
+      </div>
+    </div> 
+
+  </slug>
+  
+  <rule></rule>
+  
+  <slug>
+    <div main="">{{$Sync}}</div>
+    <div secondary="">{{$On}}</div>
+  </slug>
+  
+  <rule></rule>
+  
+  <div>
+    <a is="nano-anchor">{{$Manage Other People}}</a>
+  </div>
+
+</template>
+
+<script>"use strict";document.registerElement("people-view",{prototype:{__proto__:HTMLElement.prototype,template:document.currentImport.querySelector("template#people-view"),createdCallback:function(){this._dom=Annotations.stamp(this.template,this,this)}}});</script>
+<style>on-startup-view{display:block}on-startup-view slug{display:block;padding:12px 0 0 24px}on-startup-view actions{display:block;padding-left:36px}on-startup-view rule{display:block;border-bottom:1px solid #f3f3f3}on-startup-view label{padding-bottom:12px}on-startup-view input{margin-right:16px;padding-bottom:12px}</style>
+
+<template id="on-startup-view">
+  <slug style="padding-left: 24px;" on-change="onInputChange">
+    <label horizontal="" center="" layout=""><input name="{{inputGroup}}" value="new" type="radio"><span>{{$Open the New Tab page}}</span></label>
+    <label horizontal="" center="" layout=""><input name="{{inputGroup}}" value="left" type="radio"><span>{{$Continue where you left off}}</span></label>
+    <label horizontal="" center="" layout=""><input name="{{inputGroup}}" value="specific" type="radio"><span>{{$Open a specific page or set of pages}}</span></label>
+  </slug>
+  <actions>
+    <a is="nano-anchor">{{$Add a new page}}</a>
+    <rule></rule>
+    <a is="nano-anchor">{{$Use current pages}}</a>
+  </actions>
+</template>
+
+<script>"use strict";document.registerElement("on-startup-view",{prototype:{__proto__:HTMLElement.prototype,template:document.currentImport.querySelector("template#on-startup-view"),createdCallback:function(){this._dom=Annotations.stamp(this.template,this,this),this._dom.set("inputGroup","g"+Math.floor(1e3*(Math.random()+1)))},set settings(t){this._settings=t,this.querySelector('input[value="'+(t.on_startup||"new")+'"]').checked=!0},onInputChange:function(t){this._settings.on_startup=t.target.value,Nano.fire(this,"settings-changed",{on_startup:t.target.value})}}});</script>
+<style>appearance-view{display:block}appearance-view label{display:block;padding:12px 0 12px 24px}appearance-view actions{display:block;padding-left:36px}appearance-view rule{display:block;border-bottom:1px solid #f3f3f3}appearance-view input{margin-right:16px;padding-bottom:12px}appearance-view [caps]{text-transform:uppercase}appearance-view [sub]{color:#999}</style>
+
+<template id="appearance-view">
+  
+  <label horizontal="" center="" layout="">
+    <icon settings=""></icon>
+    <div style="padding-left: 12px;">
+      <div>{{$Wallpaper}}</div>
+      <div>{{$Open the wallpaper app}}</div>
+    </div>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal="" center="" layout="">
+    <icon settings=""></icon>
+    <div style="padding-left: 12px;" flex="">
+      <div>{{$Themes}}</div>
+      <div>{{$Choose form the Chrome Web Store}}</div>
+    </div>
+    <a is="nano-anchor" caps="">{{$Reset to Default}}</a>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal="" center="" layout="">
+    <input type="checkbox" name="show_home_button" checked="{{show_home_button}}" on-change="onInputChange">
+    <div><span>{{$Show home button}}</span><br><span>{{$Disabled}}</span></div>
+  </label>
+  <rule></rule>
+  <label horizontal="" center="" layout="">
+    <input type="checkbox" name="show_bar" checked="{{show_bar}}" on-change="onInputChange">
+    <div>{{$Always show the bookmarks bar}}</div>
+  </label>
+    
+  <rule></rule>
+  
+  <a is="nano-anchor">
+    <div>{{$Customize Fonts}}</div>
+    <div sub="">{{$Choose font types and encoding}}</div>
+  </a>
+
+  <rule></rule>
+  
+  <a is="nano-anchor">{{$Use current pages}}</a>
+  
+</template>
+
+<script>"use strict";document.registerElement("appearance-view",{prototype:{__proto__:HTMLElement.prototype,template:document.currentImport.querySelector("template#appearance-view"),createdCallback:function(){this._dom=Annotations.stamp(this.template,this,this),Nano.property(this,"settings")},set settings(t){this._dom.set(t.appearance)},onInputChange:function(t){Nano.fire(this,"settings-changed",{section:"appearance",setting:t.target.name,value:t.target.checked})}}});</script>

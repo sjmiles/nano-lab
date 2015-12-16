@@ -1,0 +1,29 @@
+<style>
+  nano-views {
+    display: none;
+  }
+</style>
+
+<script>
+  'use strict';
+  document.registerElement('nano-views', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.url = 'src/'
+      },
+      viewChanged: function(name, element) {
+        Nano.importUrls(this.url + name + '-view.html')
+        if (!this._views) {
+          this._views = Object.create(null);
+        }
+        this._views[name] = element;
+        for (var n in this._views) {
+          var view = this.views[n], active = (name === n);
+          view.active = active;
+          view.style.display = active ? '' : 'none';
+        }
+      }
+    }
+  });   
+</script>

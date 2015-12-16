@@ -1,0 +1,124 @@
+<style>
+  
+  polymart-view {
+    display: block;
+  }
+
+  nav-bar {
+    white-space: pre;
+    background-color: #607d8b;
+    color: whitesmoke;
+    position: fixed;
+    top: 0;
+    width: 256px;
+    bottom: 0px;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  content-view {
+    display: block;
+    padding-left: 256px;
+  }
+
+  icon[menu] {
+    display: none;
+  }
+
+  /* narrow mode */
+  @media (max-width: 512px) {
+    nav-bar {
+      left: -256px;
+    }
+    nav-bar[open] {
+      left: 0px;
+    }
+    content-view {
+      padding-left: 0px;
+    }
+    icon[menu] {
+      display: inline-block;
+    }
+  }
+
+  icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    color: white;
+  }
+
+  app-bar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    padding: 0 16px;
+    background-color: white;
+  }
+
+  app-bar [flex] {
+    text-align: center;
+  }
+
+  app-container {
+    margin-top: 64px;
+    display: block;
+    background-color: whitesmoke;
+    text-align: center;
+  }
+
+</style>
+
+<dom-module id="polymart-view">
+
+  <template>
+    
+    <content-view>
+      
+      <app-container>
+        <home-view></home-view>
+      </app-container>
+      
+      <app-bar horizontal center layout>
+        <icon menu tabindex="0" on-click="menuButtonTap"></icon>
+        <h3 flex>Polymart</h3>
+        <icon cart tabindex="0" on-click="cartTap"></icon>
+      </app-bar>
+      
+    </content-view>
+    
+    <nav-bar></nav-bar>
+    
+  </template>
+
+  <script>
+    document.registerElement('polymart-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.root = Annotations.stamp('polymart-view', this);
+        },
+        // lazy views
+        set view(view) {
+          //console.log('setView:', view);
+          Nano.import('src/' + view + '-view.html');
+          if (!this._views) {
+            this._views = {};
+          }
+          this._views[view] = true;
+          for (var n in this._views) {
+            var impl = this.root.$('#' + n);
+            var active = (view === n);
+            impl.active = active;
+            impl.style.display = active ? '' : 'none';
+          }
+        }
+      }  
+    });
+  </script>
+  
+</dom-module>

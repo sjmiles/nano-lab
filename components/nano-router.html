@@ -1,0 +1,37 @@
+<script>
+          window.addEventListener('popstate', this.parseLocation.bind(this));
+          // convert SPA clicks to pushState changes
+          document.addEventListener('click', this.jackClicks.bind(this));
+          // TODO(sjmiles): ick: seed the view cache so we can hide 'feed' even if we've never selected it
+          this._views = {feed: true, article: true};
+        },
+        
+        set topics(topics) {
+          this._topics = topics;
+          var html = '';
+          topics && topics.forEach(function(t) {
+            html += '<a href="?' + t.title + '">' + t.title + '</a>';
+          });
+          this.root.$('#index').innerHTML = html;
+        },
+
+        // click jacking
+        jackClicks: function(e) {
+          var a;
+          e.path.some(function(ac) {
+            return (ac.localName === 'a') && (a=ac);
+          });
+          if (a && a.getAttribute('href').indexOf('://') < 0) {
+            e.preventDefault();
+            history.pushState(null, '', a.href);
+            this.parseLocation();
+          }      
+        },
+
+        // extract route from url hash
+        parseLocation: function() {
+          // ?[route]
+          this.route = location.search.slice(1);
+        },
+</script>
+          

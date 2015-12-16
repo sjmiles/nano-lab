@@ -1,0 +1,119 @@
+<style>
+  appearance-view {
+    display: block;
+  }
+  appearance-view label {
+    display: block;
+    padding: 12px 0 0 24px;
+  }
+  appearance-view actions {
+    display: block;
+    padding-left: 36px;
+  }
+  appearance-view rule {
+    display: block;
+    border-bottom: 1px solid #f3f3f3;
+  }
+  appearance-view label {
+    padding-bottom: 12px;
+  }
+  appearance-view input {
+    margin-right: 16px;
+    padding-bottom: 12px;
+  }
+  appearance-view [caps] {
+    text-transform: uppercase;
+  }
+  appearance-view [sub] {
+    color: #999999;
+  }
+</style>
+
+<template id="appearance-view">
+  
+  <label horizontal center layout>
+    <icon settings></icon>
+    <div style="padding-left: 12px;">
+      <div>{{$Wallpaper}}</div>
+      <div>{{$Open the wallpaper app}}</div>
+    </div>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal center layout>
+    <icon settings></icon>
+    <div style="padding-left: 12px;" flex>
+      <div>{{$Themes}}</div>
+      <div>{{$Choose form the Chrome Web Store}}</div>
+    </div>
+    <a is="nano-anchor" caps>{{$Reset to Default}}</a>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal center layout>
+    <input type="checkbox" name="show_home_button" checked="{{showHome}}" on-change="onInputChange">
+    <div><span>{{$Show home button}}</span><br><span>{{$Disabled}}</span></div>
+  </label>
+  <rule></rule>
+  <label horizontal center layout>
+    <input type="checkbox" name="show_bar" checked="{{showBookmarks}}" on-change="onInputChange">
+    <div>{{$Always show the bookmarks bar}}</div>
+  </label>
+    
+  <rule></rule>
+  
+  <a is="nano-anchor">
+    <div>{{$Customize Fonts}}</div>
+    <div sub>{{$Choose font types and encoding}}</div>
+  </a>
+
+  <rule></rule>
+  
+  <a is="nano-anchor">{{$Use current pages}}</a>
+  
+</template>
+
+<script>
+  'use strict';
+  document.registerElement('appearance-view', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      
+      template: document.currentImport.querySelector('template#appearance-view'),
+      
+      createdCallback: function() {
+        //Accessors.for(this, ['settings']);
+        this._dom = Annotations.stamp(this.template, this, this);
+      },
+      
+      get settings() {
+        return Accessors.get(this, 'settings');
+      },
+      
+      set settings(settings) {
+        if (Acessors.set(this, 'settings', settings)) {
+          var a = settings.appearance;
+          this._dom.set('showHome', a.show_home_button);
+          this._dom.set('showBookmarks', a.show_bar);
+        }
+      },
+      
+      /*,
+      set settings(settings) {
+        this._settings = settings;
+        var a = settings.appearance;
+        this._dom.set('showHome', a.show_home_button);
+        this._dom.set('showBookmarks', a.show_bar);
+      }*/,
+      onInputChange: function(e) {
+        var n = e.target.name, v = e.target.checked;
+        this._settings.appearance[n] = v;
+        var detail = {};
+        detail['appearance.' + n] = v;
+        Nano.fire(this, 'settings-changed', detail);
+      }
+    }
+  });
+</script>

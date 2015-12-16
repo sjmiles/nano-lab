@@ -1,0 +1,186 @@
+<dom-module id="feed-view">
+  <style>
+    feed-view {
+      display: block;
+    }
+
+    feed-view [grid-cell] {
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      /**/
+      -ms-flex-direction: column;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      /**/
+      background-color: white;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    feed-view [grid-cell] div {
+      padding: 8px;
+    }
+
+    feed-view feed-image {
+      display: inline-block;
+      height: 232px;
+      background-size: cover;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      /**/
+      opacity: 0;
+      transition: opacity 200ms ease-in;
+      /**/
+      -ms-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+    }
+
+    feed-view about {
+      height: 64px;
+      padding: 0 8px;
+      text-align: center;
+      letter-spacing: 0.8px;
+      line-height: 1.15;
+    }
+
+    feed-view since {
+      padding-left: 12px;
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+  </style>
+  
+  <template id="feed-item">
+    <a grid-cell href="{{href}}">
+      <feed-image></feed-image>
+      <div>
+        <about>{{about}}</about><since>{{since}}</since>
+      </div>
+    </a>
+  </template>
+  
+  <script>
+   
+    document.registerElement('feed-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        
+        createdCallback: function() {
+          this.$grid = this.appendChild(document.createElement('grid-layout'));
+          Nano.property(this, 'feed');
+          Nano.property(this, 'active');
+        },    
+    
+        activeChanged: function(active) {
+          this.render(this.feed);
+        },
+
+        set feed(feed) {
+          this.render(feed);
+        },
+
+        render: function(feed) {
+          this.clear();
+          if (this.active && feed) {
+            this.$grid.appendChild(this.renderArticles(this.getArticles(feed)));
+          }
+        },
+
+        clear: function() {
+          this.$grid.innerText = '';
+        },
+
+        getArticles: function(feed) {
+          var articles = feed && feed.item || [];
+          var FAVICON_URL = 'http://s2.googleusercontent.com/s2/favicons?alt=feed&domain_url=';
+          var icon = this.FAVICON_URL + feed.link;
+          // convert data-model into view-model
+          articles.forEach(function(article) {
+            article.topic = feed.topic;
+            article.label = feed.title;
+            article.icon = icon;
+            // scrape image url
+            var data = article.encoded || article.description || '';
+            var m$ = data.match(/<img[^>]+src="([^">]+)"/);
+            article.thumb = m$ && m$[1] && m$[1].replace('&amp;', '&');
+            // time since
+            var d = article._date = article._date || new Date(article.pubDate);
+            article.since = this.timeSince(d);
+            //console.log(article);
+          }, this);
+          return articles;
+        },
+
+        timeSince: function(date) {
+          var s = Math.floor(((new Date()) - date) / 1000);
+          var t = Math.floor(s / 31536000);
+          if (t > 1) {
+            return t + 'y';
+          }
+          t = Math.floor(s / 2592000);
+          if (t > 1) {
+            return t + 'M';
+          }
+          t = Math.floor(s / 86400);
+          if (t >= 1) {
+            return t + 'd';
+          }
+          t = Math.floor(s / 3600);
+          if (t >= 1) {
+            return t + 'h';
+          }
+          t = Math.floor(s / 60);
+          if (t > 1) {
+            return t + 'm';
+          }
+          return Math.floor(s) + 's';
+        },
+
+        renderArticles: function(articles) {
+          var $ = function(e, s) { return e.querySelector(s); };
+          var frag = document.createDocumentFragment();
+          var imge = this.imgOn;
+          articles.forEach(function(a, i) {
+            if (a.thumb && a.title) {
+              var splinter = document.createDocumentFragment();
+              var dom = Annotations.stamp('feed-view', splinter);
+              dom.set({
+                href: '?' + a.topic + '/' + i,
+                about: a.title,
+                since: a.since
+              });
+              var image = $(splinter, 'feed-image');
+              image.style.backgroundImage = 'url(' + a.thumb + ')';
+              var img = new Image();
+              img.host = $(splinter, '[grid-cell]');
+              img.image = image;
+              img.onload = imge.load;
+              img.onerror = imge.err;
+              img.src = a.thumb;
+              frag.appendChild(splinter);
+            }
+          });
+          return frag;
+        },
+
+        imgOn: {
+          load: function() {
+            if (this.width < 32 || this.height < 32) {
+              this.image.style.backgroundImage = 'url(no-image.png)';
+            }
+            this.image.style.opacity = 1;
+          },
+          err: function() {
+            this.host.style.display = 'none';
+          }
+        }
+        
+      }
+    });
+  </script>
+  
+</dom-module>

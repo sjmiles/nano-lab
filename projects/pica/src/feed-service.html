@@ -1,0 +1,28 @@
+<script>
+  document.registerElement('feed-service', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        // scrape up property values set before upgrade or set via attribute
+        Nano.property(this, 'request');        
+      },
+      set request(request) {
+        this._request = request;
+        if (request) {
+          // fetch the data from `feedService` (async)
+          feedService.fetch(request,
+            function(results) {
+              // TODO(sjmiles): topic may have changed in the interim, do this better
+              if (this._request === request) {
+                this.feed = results;
+              }
+            }.bind(this)
+          );
+        }
+      },
+      set feed(feed) {
+        Nano.fire(this, 'feed-changed', {feed: feed});
+      }      
+    }  
+  }); 
+</script>

@@ -1,0 +1,39 @@
+<script>
+  document.registerElement('feed-data', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        // feeds (may be preloaded)
+        this.feeds = window.feeds || {};
+        // data service
+        this.service = document.createElement('feed-service');
+        this.service.addEventListener('feed-changed', this.onFeedServiceUpdate.bind(this));
+        // scrape pre-upgrade properties or attributes
+        Nano.property(this, 'topic');
+      },
+      // feed updates from the service
+      onFeedServiceUpdate: function(e) {
+        // assign and cache feed provided by feed-service
+        this.feed = this.feeds[this._topic.title] = e.detail.feed;
+      },
+      // feed selected via topic-change, feed service update, or any reason
+      set feed(feed) {
+        this.dispatchEvent(new CustomEvent('feed-changed', {bubbles: false, detail: feed}));
+      },
+      set topic(topic) {
+        this._topic = topic;
+        if (topic) {
+          // look for feed data in cache (keyed by `topic.title`)
+          var feed = this.feeds[topic.title];
+          if (feed) {
+            this.feed = feed;
+          } else {
+            // request the feed data (async)
+            // TODO(sjmiles): note that `topic.feed` represents the feed URL, `this.feed` contains actual feed data
+            this.service.request = topic.feed;
+          }
+        }
+      }
+    }
+  });
+</script>

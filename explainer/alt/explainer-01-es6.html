@@ -31,15 +31,15 @@
       
     class XFoo1 extends HTMLElement {
       createdCallback() {
-        this.dom = Annotations.stamp(document.querySelector('template#x-foo'), this, this);
-        this.dom.set({localName: this.localName});
-        this.msg = 'I Live!';
-      }
-      set msg(msg) {
-        this.dom.set('msg', msg);
+        Accessors.for(this, ['msg', 'name']);
+        this._dom = Annotations.stamp(document.querySelector('template#x-foo'), this, this);
+        this._dom.set({localName: this.localName, msg: 'I Live!'});
       }
       click() {
         this.msg = 'Hello yourself!';
+      }
+      msgChanged(msg) {
+        this._dom.set('msg', msg);
       }
     };
     document.registerElement('x-foo-1', XFoo1);   

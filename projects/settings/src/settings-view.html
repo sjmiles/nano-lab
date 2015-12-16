@@ -1,0 +1,54 @@
+<nano-import href="src/appearance-view.html"></nano-import>
+
+<style>
+  settings-view {
+    display: block;
+    min-width: 320px;
+    max-width: 620px;
+    margin: 0 auto;
+    font-size: 0.8em;
+  }
+  settings-view settings-card {
+    display: block;
+    margin-top: 40px;
+    background-color: white;
+    line-height: 160%;
+  }
+</style>
+
+<script>
+  'use strict';
+  document.registerElement('settings-view', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.views = [];
+        this.settings = window.settings;
+        window.views && views.forEach(function(v) {
+          var view = document.createElement(v + '-view');
+          view.settings = this.settings;
+          view.addEventListener('settings-changed', this.onSettingsChanged.bind(this));
+          this.views.push(view);
+          var sv = document.createElement('settings-card');
+          sv.setAttribute('shadow', '');
+          sv.appendChild(view);
+          this.appendChild(sv);
+        }, this);
+      },
+      onSettingsChanged: function(e) {
+        var obj = this.settings[e.detail.section];
+        if (obj) {
+          obj[e.detail.setting] = e.detail.value;
+          this.updateViews();
+        }
+      },
+      updateViews: function() {
+        // broadcasting for now
+        var settings = this.settings;
+        this.views.forEach(function(v) {
+          v.settings = settings;
+        });
+      }
+    }          
+  });
+</script>

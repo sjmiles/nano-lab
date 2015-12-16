@@ -1,0 +1,175 @@
+<style>
+  
+  home-view {
+    display: block;
+  }
+  search-bar {
+    padding: 16px;
+  }
+  search-decor {
+    display: block;
+    border: 1px solid gray;
+    border-radius: 16px;
+    background-color: white;
+    padding: 4px 8px;
+  }
+  search-decor input {
+    margin-left: 8px;
+    border: none;
+  }
+  [hero] {
+    border: 1px solid gray;
+    height: 132px;
+  }
+  [hero] > div {
+    padding: 16px;
+  }
+  [hero] > div > div {
+    box-sizing: border-box;
+    height: 100px;
+    padding: 40px 0;
+    background: white no-repeat left center /contain;
+  }
+  product-carousel {
+    border: 1px solid gray;
+    height: 164px;
+    padding: 4px 8px;
+    font-size: 0.7em;
+    overflow-x: auto;
+  }
+  product-carousel > div {
+    width: 96px;
+  }
+  product-carousel img {
+    width: 48px;
+  }
+  action-call {
+    border: 1px solid gray;
+    height: 196px;
+    padding: 4px 8px;
+  }
+  category-view {
+    border: 1px solid gray;
+    height: 240px;
+    padding: 4px 8px;
+  }
+  sign-up {
+    padding: 16px 8px;
+    text-align: left;
+  }
+  footer-view {
+    padding: 16px;
+  }
+  footer-view a {
+    white-space: nowrap;
+    padding: 4px 8px !important;
+  }
+</style>
+
+<dom-module id="home-view">
+
+  <template>
+    <div vertical layout>
+      <search-bar vertical middle layout>
+        <search-decor horizontal layout>
+          <icon key></icon>
+          <input flex>
+        </search-decor>
+      </search-bar>
+      <nano-carousel hero vertical middle layout>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
+      </nano-carousel>
+      <product-carousel horizontal center layout>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+        <div noflex vertical center layout>
+          <img src="no-image-small.png">
+          <span>Good Price</span>
+          <span>Item</span>
+        </div>
+      </product-carousel>
+      <action-call vertical middle layout>
+        Sale!
+      </action-call>
+      <category-view vertical middle layout>
+        Categories
+      </category-view>
+      <sign-up vertical layout>
+        <span>Signup and save!</span>
+        <span><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
+      </sign-up>
+      <footer-view vertical middle layout>
+        <div horizontal layout>
+          <a is="nano-anchor">Help</a>
+          <span flex></span>
+          <a is="nano-anchor">Feedback</a>
+          <span flex></span>
+          <a is="nano-anchor">Terms of Use</a>
+        </div>
+        <br>
+        <a is="nano-anchor" vertical middle layout>Privacy and Security</a>
+      </footer-view>
+    </div>
+    
+    <nano-ajax url="mart/vod.php" on-response="onVodResponse"></nano-ajax>
+
+  </template>
+
+  <script>
+    document.registerElement('home-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.root = Annotations.stamp('home-view', this);
+        },
+        onVodResponse: function(e) {
+          var vod = e.detail;
+          //this.root.$('#hero').style.background = 'url("' + vod.mediumImage + '")';
+          this.root.set({
+            background: {backgroundImage: 'url("' + vod.mediumImage + '")'},
+            item: vod.name
+          });
+        }
+      }  
+    });
+  </script>
+  
+</dom-module>

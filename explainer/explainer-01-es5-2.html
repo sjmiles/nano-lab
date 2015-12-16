@@ -13,8 +13,9 @@
     }
   </style>
   
-  <link rel="import" href="../components/polymer/polymer-nano.debug.html">
-
+  <link rel="import" href="../components/polymer/annotator2.html">
+  <link rel="import" href="../components/polymer/annotations2.html">
+  
 </head>
 <body>
 
@@ -23,7 +24,8 @@
   <x-foo-1></x-foo-1>
 
   <template id="x-foo">
-    <b>{{localName}}</b> says "<span>{{msg}}</span>" (<button on-click="click">Say Hello</button>)
+    <b>{{localName}}</b> says "<span>{{msg}}</span>" (<button title="{{$Click To Say Hello}}" on-click="click">{{$Say Hello}}</button>)<br>
+    "<span>{{msg}}</span>" was said by <b>{{localName}}</b>
   </template>
   
   <script>

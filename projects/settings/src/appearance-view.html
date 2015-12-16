@@ -1,0 +1,95 @@
+<style>
+  appearance-view {
+    display: block;
+  }
+  appearance-view label {
+    display: block;
+    padding: 12px 0 0 24px;
+  }
+  appearance-view actions {
+    display: block;
+    padding-left: 36px;
+  }
+  appearance-view rule {
+    display: block;
+    border-bottom: 1px solid #f3f3f3;
+  }
+  appearance-view label {
+    padding-bottom: 12px;
+  }
+  appearance-view input {
+    margin-right: 16px;
+    padding-bottom: 12px;
+  }
+  appearance-view [caps] {
+    text-transform: uppercase;
+  }
+  appearance-view [sub] {
+    color: #999999;
+  }</style>
+
+<template id="appearance-view">
+  
+  <label horizontal center layout>
+    <icon settings></icon>
+    <div style="padding-left: 12px;">
+      <div>{{$Wallpaper}}</div>
+      <div>{{$Open the wallpaper app}}</div>
+    </div>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal center layout>
+    <icon settings></icon>
+    <div style="padding-left: 12px;" flex>
+      <div>{{$Themes}}</div>
+      <div>{{$Choose form the Chrome Web Store}}</div>
+    </div>
+    <a is="nano-anchor" caps>{{$Reset to Default}}</a>
+  </label>
+
+  <rule></rule>
+
+  <label horizontal center layout>
+    <input type="checkbox" name="show_home_button" checked="{{show_home_button}}" on-change="onInputChange">
+    <div><span>{{$Show home button}}</span><br><span>{{$Disabled}}</span></div>
+  </label>
+  <rule></rule>
+  <label horizontal center layout>
+    <input type="checkbox" name="show_bar" checked="{{show_bar}}" on-change="onInputChange">
+    <div>{{$Always show the bookmarks bar}}</div>
+  </label>
+    
+  <rule></rule>
+  
+  <a is="nano-anchor">
+    <div>{{$Customize Fonts}}</div>
+    <div sub>{{$Choose font types and encoding}}</div>
+  </a>
+
+  <rule></rule>
+  
+  <a is="nano-anchor">{{$Use current pages}}</a>
+  
+</template>
+
+<script>
+  'use strict';
+  document.registerElement('appearance-view', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      template: document.currentImport.querySelector('template#appearance-view'),
+      createdCallback: function() {
+        this._dom = Annotations.stamp(this.template, this, this);
+        Nano.property(this, 'settings');
+      },
+      set settings(settings) {
+        this._dom.set(settings.appearance);
+      },
+      onInputChange: function(e) {
+        Nano.fire(this, 'settings-changed', {section: 'appearance', setting: e.target.name, value: e.target.checked});
+      }
+    }
+  });
+</script>

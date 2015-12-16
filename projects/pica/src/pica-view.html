@@ -1,0 +1,230 @@
+<style>
+  
+  pica-view {
+    display: block;
+  }
+
+  app-index {
+    white-space: pre;
+    background-color: #607d8b;
+    color: whitesmoke;
+    position: fixed;
+    top: 0;
+    width: 256px;
+    bottom: 0px;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  app-index > a {
+    display: block;
+    padding: 8px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  content-view {
+    display: block;
+    padding-left: 256px;
+  }
+
+  icon[menu] {
+    display: none;
+  }
+
+  /* narrow mode */
+  @media (max-width: 512px) {
+    app-index {
+      left: -256px;
+    }
+    app-index[open] {
+      left: 0px;
+    }
+    content-view {
+      padding-left: 0px;
+    }
+    icon[menu] {
+      display: inline-block;
+    }
+  }
+
+  icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    color: white;
+  }
+
+  app-bar {
+    display: block;
+    background-color: white;
+    padding: 32px;
+  }
+
+  app-bar > h1 {
+    text-align: center;
+  }
+
+  app-container {
+    display: block;
+    background-color: whitesmoke;
+    padding: 16px 64px;
+    text-align: center;
+  }
+
+</style>
+
+<dom-module id="pica-view">
+
+  <template>
+
+    <feed-data id="data" topic="{{topic}}" on-feed-changed="onFeedDataUpdate"></feed-data>
+
+    <content-view>
+
+      <app-bar>
+        <icon menu tabindex="0" on-click="menuButtonTap"></icon>
+        <h1>{{topic.title}}</h1>
+      </app-bar>
+
+      <app-container>
+        <feed-view id="feed" feed="{{feed}}"></feed-view>
+        <article-view id="article" article="{{article}}"></article-view>
+      </app-container>
+
+    </content-view>
+
+    <app-index id="index" on-click="indexTap">{{index}}</app-index>
+
+  </template>
+
+  <script>
+    //BaseElement.sugarProperties(PicaView, ['indexOpen','topics','route','topic','feed','view']);
+
+    document.registerElement('pica-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.dom = Annotations.stamp('pica-view', this);
+          // could be data here
+          this.topics = window.topics;
+          // fetch route
+          this.parseLocation();
+          // watch route
+          window.addEventListener('popstate', this.parseLocation.bind(this));
+          // convert SPA clicks to pushState changes
+          document.addEventListener('click', this.jackClicks.bind(this));
+        },
+        
+        set topics(topics) {
+          this._topics = topics;
+          var html = '';
+          topics && topics.forEach(function(t) {
+            html += '<a href="?' + t.title + '">' + t.title + '</a>';
+          });
+          this.dom.set('index', html);
+        },
+
+        // click jacking
+        jackClicks: function(e) {
+          var a;
+          e.path.some(function(ac) {
+            return (ac.localName === 'a') && (a=ac);
+          });
+          if (a && a.getAttribute('href').indexOf('://') < 0) {
+            e.preventDefault();
+            history.pushState(null, '', a.href);
+            this.parseLocation();
+          }      
+        },
+
+        // extract route from url hash
+        parseLocation: function() {
+          // ?[route]
+          this.route = location.search.slice(1);
+        },
+
+        // construct state from route
+        set route(route) {
+          var routes = route.split('/');
+          this.topic = this.findTopic(routes[0]);
+          this.articleKey = routes[1];
+          this.updateViews();
+        },
+
+        // find topic by title (use title as key)
+        findTopic: function(title) {
+          var selected = 0;
+          for (var i = 0, t; (t = this._topics[i]); i++) {
+            if (t.title === title) {
+              selected = i;
+              break;
+            }
+          }
+          return this._topics[selected];
+        },
+
+        // display topic meta data
+        set topic(topic) {
+          this._topic = topic;
+          // reflect topic in app-bar
+          this.querySelector('app-bar').style.backgroundColor = topic.color;
+          this.dom.set({topic: topic, 'topic.title': topic.title});
+        },
+
+        // feed-data can supply a feed asynchronously when topic is set
+        onFeedDataUpdate: function(e) {
+          // e.detail.feed could be null if the feed-data is transitioning
+          this.feed = e.detail.feed;
+        },
+
+        set feed(feed) {
+          this._feed = feed;
+          this.updateViews();
+          this.dom.set('feed', feed);
+        },
+
+        // choose a view and assign data based on state
+        // depends on both _feed and articleKey
+        updateViews: function() {
+          // add topic field to feed data
+          if (this._feed) {
+            this._feed.topic = this._topic.title;
+            if (this.articleKey) {
+              this.dom.set('article', this.findArticle(this._feed, this.articleKey));
+            }
+          }
+          this.view = this.articleKey ? 'article' : 'feed';
+          //this.$.article.active = (this.view === 'article');
+          //this.$.feed.active = (this.view === 'feed');
+        },
+
+        // find article by key (index)
+        findArticle: function(feed, key) {
+          return feed && feed.entries[key];
+        },
+
+        // lazy views
+        viewChanged: function(view) {
+          // imports `lazy/view.html` if needed, hides all views but `view`
+          this.setView(view);
+        },
+
+        menuButtonTap: function() {
+          this.indexOpen = true;
+        },
+
+        indexTap: function(e) {
+          this.indexOpen = false;
+        },
+
+        set indexOpen(indexOpen) {
+          Nano.boolAttribute(this.querySelector('#index'), 'open', indexOpen);
+        }
+
+      }  
+    });
+  </script>
+  
+</dom-module>

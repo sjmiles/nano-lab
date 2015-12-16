@@ -1,0 +1,83 @@
+<script>
+(function() {
+  
+  var imports = [];
+
+  var provideUrls = function() {
+    Array.prototype.forEach.call(arguments, provideUrl);
+  };
+  
+  var provideUrl = function(url) {
+    imports[url] = true;
+    //console.log('provideUrl: ', url, imports[url]);
+  };
+
+  var importUrls = function() {
+    Array.prototype.forEach.call(arguments, importUrl);
+  };
+  
+  var importUrl = function(url) {
+    //console.log('importUrl: ', url, imports[url]);
+    if (imports[url]) {
+      return true;
+    }
+    imports[url] = true;
+    himport(url);
+  };
+  
+  var himport = function(href, cb) {
+    var link = document.createElement('link');
+    link.rel = 'import';
+    link.href = href;
+    link.onload = cb;
+    // TODO(sjmiles): why doesn't property work? bug?
+    //link.async = true;
+    link.setAttribute('async', '');
+    document.head.appendChild(link);
+  };
+  
+  Nano.provide = provideUrls;
+  Nano.import = importUrls;
+
+  // TODO(sjmiles): reasons for delay code were lost in the fog of war.
+  // Is the delay to allow scripts to call `Nano.provide` before processing declarative imports?
+  // Is the delay so the imports don't defer first paint?
+
+  var docReady = false; //document.readyState === "complete" || document.readyState === "interactive";
+  if (!docReady) {
+    var deferred = [];
+    var deferUrl = function(url) {
+      //console.log('importUrl(deferred): ', url);
+      deferred.push(url);
+    };
+    var _importUrl = importUrl;
+    importUrl = deferUrl;
+    window.addEventListener('load', function() {
+      //console.log('window load');
+      importUrl = _importUrl;
+      deferred.forEach(importUrl);
+    });
+  }
+
+  // register elements last (remember upgrade is sync)
+ 
+  document.registerElement('nano-import', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        importUrl(this.getAttribute('href'));
+      }
+    }
+  });
+  
+  document.registerElement('nano-provide', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        provideUrl(this.getAttribute('href'));
+      }
+    }
+  });
+  
+})();
+</script>
