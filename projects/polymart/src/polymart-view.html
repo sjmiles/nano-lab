@@ -51,7 +51,7 @@
 
   app-bar {
     display: block;
-    position: fixed;
+    position: fixed !important;
     top: 0;
     left: 0;
     right: 0;
@@ -65,10 +65,11 @@
   }
 
   app-container {
-    margin-top: 64px;
     display: block;
     background-color: whitesmoke;
     text-align: center;
+    max-width: 600px;
+    margin: 64px auto 0;
   }
 
 </style>
@@ -83,7 +84,7 @@
         <home-view></home-view>
       </app-container>
       
-      <app-bar horizontal center layout>
+      <app-bar horizontal center layout shadow>
         <icon menu tabindex="0" on-click="menuButtonTap"></icon>
         <h3 flex>Polymart</h3>
         <icon cart tabindex="0" on-click="cartTap"></icon>

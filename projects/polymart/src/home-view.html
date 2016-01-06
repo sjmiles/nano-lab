@@ -1,7 +1,7 @@
-<style>
-  
+<style> 
   home-view {
     display: block;
+    background-color: white;
   }
   search-bar {
     padding: 16px;
@@ -10,29 +10,32 @@
     display: block;
     border: 1px solid gray;
     border-radius: 16px;
-    background-color: white;
     padding: 4px 8px;
   }
   search-decor input {
     margin-left: 8px;
     border: none;
   }
+  search-decor input:focus {
+    margin-left: 8px;
+    border: none;
+    outline: none;
+  }
   [hero] {
     border: 1px solid gray;
+    height: 164px;
+    background-color: white;
+    transition: opacity 200ms ease-in-out;
+  }
+  product-view {
     height: 132px;
   }
   [hero] > div {
     padding: 16px;
   }
-  [hero] > div > div {
-    box-sizing: border-box;
-    height: 100px;
-    padding: 40px 0;
-    background: white no-repeat left center /contain;
-  }
   product-carousel {
     border: 1px solid gray;
-    height: 164px;
+    height: 116px;
     padding: 4px 8px;
     font-size: 0.7em;
     overflow-x: auto;
@@ -48,16 +51,18 @@
     height: 196px;
     padding: 4px 8px;
   }
-  category-view {
+  categories-view {
+    background-color: whitesmoke;
     border: 1px solid gray;
-    height: 240px;
     padding: 4px 8px;
+    Xoverflow-y: auto;
   }
   sign-up {
     padding: 16px 8px;
     text-align: left;
   }
   footer-view {
+    font-size: 0.8em;
     padding: 16px;
   }
   footer-view a {
@@ -66,76 +71,44 @@
   }
 </style>
 
+<dom-module id="mini-view">
+  <template>
+    <div noflex vertical center layout>
+      <img src="{{src}}">
+      <span>{{price}}</span>
+      <span>{{item}}</span>
+    </div>
+  </template>
+</dom-module>
+
 <dom-module id="home-view">
 
   <template>
+    
     <div vertical layout>
+      
       <search-bar vertical middle layout>
         <search-decor horizontal layout>
-          <icon key></icon>
+          <icon search></icon>
           <input flex>
         </search-decor>
       </search-bar>
-      <nano-carousel hero vertical middle layout>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-        <div><div style%="{{background}}">&nbsp;&nbsp;<span>{{item}}</span></div></div>
-      </nano-carousel>
-      <product-carousel horizontal center layout>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-        <div noflex vertical center layout>
-          <img src="no-image-small.png">
-          <span>Good Price</span>
-          <span>Item</span>
-        </div>
-      </product-carousel>
+      
+      <nano-carousel hero style%="{{carouselStyle}}" vertical middle layout></nano-carousel>
+      
+      <product-carousel horizontal center layout></product-carousel>
+      
       <action-call vertical middle layout>
-        Sale!
+        <product-view product="{{vod}}"></product-view>
       </action-call>
-      <category-view vertical middle layout>
-        Categories
-      </category-view>
+      
+      <categories-view vertical middle layout categories="{{categories}}"></categories-view>
+      
       <sign-up vertical layout>
         <span>Signup and save!</span>
         <span><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
       </sign-up>
+      
       <footer-view vertical middle layout>
         <div horizontal layout>
           <a is="nano-anchor">Help</a>
@@ -147,9 +120,12 @@
         <br>
         <a is="nano-anchor" vertical middle layout>Privacy and Security</a>
       </footer-view>
+      
     </div>
     
+    <nano-ajax url="mart/trending.php" on-response="onTrendingResponse"></nano-ajax>
     <nano-ajax url="mart/vod.php" on-response="onVodResponse"></nano-ajax>
+    <nano-ajax url="mart/taxonomy.php" on-response="onTaxonomyResponse"></nano-ajax>
 
   </template>
 
@@ -159,14 +135,45 @@
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
           this.root = Annotations.stamp('home-view', this);
+          this.root.set('carouselStyle', {opacity: 0});
         },
         onVodResponse: function(e) {
-          var vod = e.detail;
-          //this.root.$('#hero').style.background = 'url("' + vod.mediumImage + '")';
-          this.root.set({
-            background: {backgroundImage: 'url("' + vod.mediumImage + '")'},
-            item: vod.name
-          });
+          this.root.set({vod: e.detail});
+        },
+        onTaxonomyResponse: function(e) {
+          if (e.detail) {
+            this.root.set({categories: e.detail.categories});
+          }
+        },
+        onTrendingResponse: function(e) {
+          var crsl = this.root.$('[hero]');
+          crsl.textContent = '';
+          if (e.detail) {
+            var items = e.detail.items;
+            for (var i=0; i<5; i++) {
+              var pv = document.createElement('product-view');
+              crsl.appendChild(document.createElement('div')).appendChild(pv);
+              pv.product = items[i];
+            }
+            crsl.style.opacity = 1;
+            crsl.start();
+          }
+          //
+          var pc = this.root.$('product-carousel');
+          pc.textContent = '';
+          if (e.detail) {
+            var items = e.detail.items;
+            for (var i=0; i<20; i++) {
+              var item = items[i + 5];
+              var frag = document.createDocumentFragment();
+              Annotations.stamp('mini-view', frag).set({
+                price: '$' + (item.salePrice || item.msrp || (item.bestMarketplacePrice && item.bestMarketplacePrice.price)),
+                name: item.name,
+                src: item.thumbnailImage
+              });
+              pc.appendChild(frag);
+            }
+          }
         }
       }  
     });

@@ -1,25 +1,74 @@
+<nano-provide href="src/feed-data.html"></nano-provide>
+
 <script>
-  document.registerElement('feed-data', {
+(function() {
+  
+  var prefix = 'https://query.yahooapis.com/v1/public/yql?q='
+  var suffix = '&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=___yqlCallback';
+  var gcb = null;
+  
+  window.___yqlCallback = function(response) {
+    gcb(response);
+  };
+
+  var feedService = {
+    fetch: function(feed, cb) {
+      gcb = cb;
+      var s = document.createElement('script');
+      //s.src = prefix + encodeURIComponent('select * from rss where url="' + feed + '"') + suffix;
+      s.src = prefix + encodeURIComponent('select * from xml where url="' + feed + '"') + suffix;
+      document.body.appendChild(s);
+    }
+  };
+  
+  document.registerElement('feed-service', {
     prototype: {
       __proto__: HTMLElement.prototype,
       createdCallback: function() {
+        // scrape up property values set before upgrade or set via attribute
+        Nano.acquire(this, 'request');        
+      },
+      set request(request) {
+        this._request = request;
+        if (request) {
+          // fetch the data from `feedService` (async)
+          feedService.fetch(request,
+            function(response) {
+              // TODO(sjmiles): topic may have changed in the interim, do this better
+              if (this._request === request) {
+                this.feed = response.query.results;
+              }
+            }.bind(this)
+          );
+        }
+      },
+      set feed(feed) {
+        //this.dispatchEvent(new CustomEvent('feed-changed', {bubbles: false, detail: feed}));
+        Nano.fire(this, 'feed-changed', feed);
+      }
+    }  
+  });
+  
+})();
+</script>
+
+<script>
+  document.registerElement('feed-data', {
+    prototype: {
+      
+      __proto__: HTMLElement.prototype,
+      
+      createdCallback: function() {
         // feeds (may be preloaded)
         this.feeds = window.feeds || {};
-        // data service
+        // initialize data service
         this.service = document.createElement('feed-service');
         this.service.addEventListener('feed-changed', this.onFeedServiceUpdate.bind(this));
         // scrape pre-upgrade properties or attributes
         Nano.property(this, 'topic');
       },
-      // feed updates from the service
-      onFeedServiceUpdate: function(e) {
-        // assign and cache feed provided by feed-service
-        this.feed = this.feeds[this._topic.title] = e.detail;
-      },
-      // feed selected via topic-change, feed service update, or any reason
-      set feed(feed) {
-        this.dispatchEvent(new CustomEvent('feed-changed', {bubbles: false, detail: feed}));
-      },
+      
+      // topic request: locate feed out of cache, or request new data
       set topic(topic) {
         this._topic = topic;
         if (topic) {
@@ -33,6 +82,76 @@
             this.service.request = topic.feed;
           }
         }
+      },
+      
+      // feed updates from the service
+      onFeedServiceUpdate: function(e) {
+        // assign and cache feed provided by feed-service
+        this.raw = e.detail;
+      },
+      
+      // process raw feed data
+      set raw(raw) {
+        // collation data
+        var topic = this._topic;
+        var label = topic.title;
+        // normalize 'item' data
+        var feed = raw.feed || raw.rss.channel || 1;
+        feed.item = feed.item || feed.entry || [];
+        // normalize 'items'
+        var items = feed && feed.item || [];
+        var FAVICON_URL = 'http://s2.googleusercontent.com/s2/favicons?alt=feed&domain_url=';
+        var icon = this.FAVICON_URL + (feed.atom || feed.link.href);
+        // normalize `item` records
+        items.forEach(function(item) {
+          // copy collation data
+          item.topic = topic;
+          item.label = label;
+          item.icon = icon;
+          // content fields
+          item._link = item.link && item.link.href;
+          item._author = item.author && item.author.name;
+          item._content = item.content ? item.content.content : (item.encoded || item.description);
+          // scrape image url
+          var m$ = item._content.match(/<img[^>]+src="([^">]+)"/);
+          item.thumb = m$ && m$[1] && m$[1].replace('&amp;', '&');
+          // dates & times
+          var d = item._date || new Date(item.published || item.pubDate);
+          item._date = d;
+          item.since = this.timeSince(d);
+        }, this);
+        this.feeds[this._topic.title] = feed;
+        this.feed = feed;
+      },
+
+      timeSince: function(date) {
+        var s = Math.floor(((new Date()) - date) / 1000);
+        var t = Math.floor(s / 31536000);
+        if (t > 1) {
+          return t + 'y';
+        }
+        t = Math.floor(s / 2592000);
+        if (t > 1) {
+          return t + 'M';
+        }
+        t = Math.floor(s / 86400);
+        if (t >= 1) {
+          return t + 'd';
+        }
+        t = Math.floor(s / 3600);
+        if (t >= 1) {
+          return t + 'h';
+        }
+        t = Math.floor(s / 60);
+        if (t > 1) {
+          return t + 'm';
+        }
+        return Math.floor(s) + 's';
+      },
+      
+      set feed(feed) {
+        // cache normalized feed data
+        this.dispatchEvent(new CustomEvent('feed-changed', {bubbles: false, detail: feed}));
       }
     }
   });

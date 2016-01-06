@@ -79,7 +79,7 @@
 
   <template>
 
-    <feed-data id="data" topic="{{topic}}" on-feed-changed="onFeedDataUpdate"></feed-data>
+    <feed-data id="data" topic="{{topic}}" on-feed-changed="onFeed"></feed-data>
 
     <content-view>
 
@@ -100,8 +100,6 @@
   </template>
 
   <script>
-    //BaseElement.sugarProperties(PicaView, ['indexOpen','topics','route','topic','feed','view']);
-
     document.registerElement('pica-view', {
       prototype: {
         __proto__: HTMLElement.prototype,
@@ -179,7 +177,7 @@
         },
 
         // feed-data can supply a feed asynchronously when topic is set
-        onFeedDataUpdate: function(e) {
+        onFeed: function(e) {
           // e.detail.feed could be null if the feed-data is transitioning
           this.feed = e.detail;
         },
@@ -207,6 +205,18 @@
         findArticle: function(feed, key) {
           return feed && feed.item[key];
         },
+        
+        menuButtonTap: function() {
+          this.indexOpen = true;
+        },
+
+        indexTap: function(e) {
+          this.indexOpen = false;
+        },
+
+        set indexOpen(indexOpen) {
+          Nano.boolAttribute(this.root.$('#index'), 'open', indexOpen);
+        },
 
         // lazy views
         set view(view) {
@@ -222,21 +232,8 @@
             impl.active = active;
             impl.style.display = active ? '' : 'none';
           }
-        },
-        
-        menuButtonTap: function() {
-          this.indexOpen = true;
-        },
-
-        indexTap: function(e) {
-          this.indexOpen = false;
-        },
-
-        set indexOpen(indexOpen) {
-          Nano.boolAttribute(this.root.$('#index'), 'open', indexOpen);
         }
-
-      }  
+      }
     });
   </script>
   

@@ -1,0 +1,87 @@
+<dom-module id="product-view">
+  <style>
+    product-view {
+      display: block;
+      text-align: left;
+      font-size: 0.7em;
+      background-color: white;
+    }
+    product-view [name] {
+      font-size: 1.2em;
+    }
+    product-view [price] {
+      font-size: 1.2em;
+    }
+    product-view [rating] {
+    }
+    product-view [numReviews] {
+      color: silver;
+    }
+    product-view a {
+      background-color: lightblue !important;   
+      padding: 6px 12px !important;
+    }
+    product-view [thumb] {
+      background: white no-repeat left center /contain;
+      margin-right: 16px;
+    }
+    product-view [shortDesc] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.8em;
+    }
+  </style>
+  <template>
+    <div thumb noflex style%="{{thumbStyle}}" style="width: 92px;"></div>
+    <div noflex style="width: 100px; margin-right: 8px;">
+      <div name>{{name}}</div>
+      <br>
+      <div>
+        <span rating>{{customerRating}}</span> <img rating src="{{customerRatingImage}}"> <span numReviews>{{numReviews}}</span>
+      </div>
+      <br>
+      <div>
+        <b price><span>{{$$}}</span><span>{{salePrice}}</span></b>&nbsp;&nbsp;(<span>{{$Reg. $}}</span><span>{{msrp}}</span>)
+      </div>
+      <br>
+      <div>
+        <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick">Buy</a>
+      </div>
+    </div>
+    <div flex shortDesc>{{shortDescription}}</div>
+  </template>
+  <script>
+    document.registerElement('product-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.setAttribute('horizontal', '');
+          this.setAttribute('layout', '');
+          this.dom = Annotations.stamp('product-view', this);
+          Nano.property(this, 'product');
+        },
+        set product(product) {
+          if (product) {
+            this.dom.set({
+              name: product.name,
+              customerRating: Number(product.customerRating).toFixed(1),
+              customerRatingImage: product.customerRatingImage,
+              numReviews: '(' + product.numReviews + ')',
+              salePrice: product.salePrice,
+              msrp: product.msrp,
+              addToCartUrl: product.addToCartUrl,
+              //shortDescription: product.shortDescription,
+              thumbStyle: {backgroundImage: 'url("' + product.mediumImage + '")'}
+            });
+            var txt = document.createElement("textarea");
+            txt.innerHTML = product.shortDescription || product.longDescription || '';
+            this.dom.$('[shortDesc]').innerHTML = txt.value;
+          }
+        },
+        buyClick: function(e) {
+          e.stopPropagation();
+        }
+      }
+    });
+  </script>
+</dom-module>

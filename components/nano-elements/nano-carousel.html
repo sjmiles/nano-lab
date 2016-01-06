@@ -2,6 +2,7 @@
   nano-carousel {
     display: block;
     position: relative;
+    overflow: hidden;
   }
   nano-carousel > * {
     display: block;
@@ -23,11 +24,20 @@
         this.addEventListener('click', this.click.bind(this));
       },
       attachedCallback: function() {
-        this.x = -5;
+        //this.start();
+      },
+      start: function() {
+        this.count = this.children.length;
+        this.x = 0;
         this.update();
-        this.click();
       },
       click: function() {
+        this.x--;
+        if (this.x <= -this.count) {
+          this.x = 0;
+        }
+        this.update();
+        /*
         if (this.interval) {
           clearInterval(this.interval);
           this.interval = null;
@@ -40,13 +50,18 @@
             this.update();
           }.bind(this), 3000);
         }
+        */
       },
       update: function() {
         var e = this.firstElementChild;
-        var x = this.x * 100;
+        var x = this.x;
         while (e) {
-          e.style.transform = 'translate3d(' + x + '%, 0, 0)';
-          x += 100;
+          e.style.visibility = x > 0 ? 'hidden' : '';
+          //e.style.opacity = x > 0 ? '0.5' : '';
+          e.style.transform = 'translate3d(' + x*100 + '%, 0, 0)';
+          if (++x > 1) {
+            x = x - this.count;
+          }
           e = e.nextElementSibling;
         }
       }

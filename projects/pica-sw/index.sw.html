@@ -19,7 +19,10 @@
   <!--<script src="../../components/webcomponents-lite.min.js"></script>-->
   
   <link rel="import" href="../../components/polymer/polymer-nano.html"> 
-  <link rel="import" href="src/pica-view.html"> 
+  <link rel="import" href="../../components/nano-elements/nano-import.html">
+  
+  <link rel="import" href="src/pica-view.html">
+  
   <link rel="import" href="topics.html"> 
   
 </head>
@@ -28,7 +31,7 @@
   <pica-view></pica-view>
 
   <script>
-    if ('serviceWorker' in navigator) {
+    if (true && ('serviceWorker' in navigator)) {
       navigator.serviceWorker.register('sw.js', {scope: '/'}).then(function(ServiceWorkerRegistration) {
         // Do something with ServiceWorkerRegistration.
       });

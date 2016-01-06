@@ -31,16 +31,17 @@
     link.href = href;
     link.onload = cb;
     // TODO(sjmiles): why doesn't property work? bug?
-    //link.async = true;
-    link.setAttribute('async', '');
+    link.async = true;
+    link.setAttribute('async', 'async');
+    // TODO(sjmiles): never seems to be async enough...
     document.head.appendChild(link);
   };
   
   Nano.provide = provideUrls;
   Nano.import = importUrls;
 
-  // TODO(sjmiles): reasons for delay code were lost in the fog of war.
-  // Is the delay to allow scripts to call `Nano.provide` before processing declarative imports?
+  // TODO(sjmiles): precise reasons for delay code lost in the fog of war.
+  // Is the delay to allow scripts to call `Nano.provide` before processing declarative imports (CE polyfill?)
   // Is the delay so the imports don't defer first paint?
 
   var docReady = false; //document.readyState === "complete" || document.readyState === "interactive";

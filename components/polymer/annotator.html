@@ -46,7 +46,7 @@
       return this._findInstanceNode(root.nodes[uid], container);
     },
     
-    _findInstanceNode(locator, container) {
+    _findInstanceNode: function(locator, container) {
       return !locator.parent ? container : this._findInstanceNode(locator.parent, container).childNodes[locator.index];
     }
     

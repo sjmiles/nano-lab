@@ -1,4 +1,56 @@
+<nano-provide href="src/feed-view.html"></nano-provide>
+<nano-import href="src/feed-data.html"></nano-import>
+
+<style>
+  grid-layout {
+    display: -webkit-flex;
+    display: flex;
+    /**/
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    /**/
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    /**/
+    max-width: /*(2*396 + 4*8)*/ 824px;
+    margin: 8px auto;
+  }
+
+  [grid-cell] {
+    -webkit-flex: none;
+    flex: none;
+    /**/
+    box-sizing: border-box;
+    width: 396px;
+    height: /* 3 * colWidth / 4 */ 297px;
+    margin: 8px;
+    overflow: hidden;
+  }
+
+  [grid-cell]:nth-of-type(3n - 2) {
+    width: calc(100% - 16px);
+    /* large item has width/height ratio 2:1 */
+    height: 412px;
+  }
+
+  /* narrow layout */
+  @media (max-width: 1208px) {
+
+    grid-layout {
+      max-width: 600px;
+    }
+
+    grid-cell {
+      width: 100% !important;
+      height: 297px !important;
+      margin: 8px 0;
+    }
+
+  }
+</style>
+
 <dom-module id="feed-view">
+  
   <style>
     feed-view {
       display: block;
@@ -54,7 +106,7 @@
     }
   </style>
   
-  <template id="feed-item">
+  <template>
     <a grid-cell href="{{href}}">
       <feed-image></feed-image>
       <div>
@@ -64,80 +116,34 @@
   </template>
   
   <script>
-   
     document.registerElement('feed-view', {
       prototype: {
         __proto__: HTMLElement.prototype,
         
         createdCallback: function() {
-          this.$grid = this.appendChild(document.createElement('grid-layout'));
-          Nano.property(this, 'feed');
-          Nano.property(this, 'active');
+          this.grid = this.appendChild(document.createElement('grid-layout'));
+          Nano.acquire(this, 'feed', 'active');
         },    
     
-        activeChanged: function(active) {
-          this.render(this.feed);
+        set active(active) {
+          this._active = active;
+          this.render(active, this._feed);
         },
 
         set feed(feed) {
-          this.render(feed);
-        },
-
-        render: function(feed) {
-          this.clear();
-          if (this.active && feed) {
-            this.$grid.appendChild(this.renderArticles(this.getArticles(feed)));
-          }
+          this._feed = feed;
+          this.render(this._active, feed);
         },
 
         clear: function() {
-          this.$grid.innerText = '';
+          this.grid.innerText = '';
         },
 
-        getArticles: function(feed) {
-          var articles = feed && feed.item || [];
-          var FAVICON_URL = 'http://s2.googleusercontent.com/s2/favicons?alt=feed&domain_url=';
-          var icon = this.FAVICON_URL + feed.link;
-          // convert data-model into view-model
-          articles.forEach(function(article) {
-            article.topic = feed.topic;
-            article.label = feed.title;
-            article.icon = icon;
-            // scrape image url
-            var data = article.encoded || article.description || '';
-            var m$ = data.match(/<img[^>]+src="([^">]+)"/);
-            article.thumb = m$ && m$[1] && m$[1].replace('&amp;', '&');
-            // time since
-            var d = article._date = article._date || new Date(article.pubDate);
-            article.since = this.timeSince(d);
-            //console.log(article);
-          }, this);
-          return articles;
-        },
-
-        timeSince: function(date) {
-          var s = Math.floor(((new Date()) - date) / 1000);
-          var t = Math.floor(s / 31536000);
-          if (t > 1) {
-            return t + 'y';
+        render: function(active, feed) {
+          this.clear();
+          if (active && feed) {
+            this.grid.appendChild(this.renderArticles(feed.item));
           }
-          t = Math.floor(s / 2592000);
-          if (t > 1) {
-            return t + 'M';
-          }
-          t = Math.floor(s / 86400);
-          if (t >= 1) {
-            return t + 'd';
-          }
-          t = Math.floor(s / 3600);
-          if (t >= 1) {
-            return t + 'h';
-          }
-          t = Math.floor(s / 60);
-          if (t > 1) {
-            return t + 'm';
-          }
-          return Math.floor(s) + 's';
         },
 
         renderArticles: function(articles) {
@@ -149,7 +155,7 @@
               var splinter = document.createDocumentFragment();
               var dom = Annotations.stamp('feed-view', splinter);
               dom.set({
-                href: '?' + a.topic + '/' + i,
+                href: '?' + a.label + '/' + i,
                 about: a.title,
                 since: a.since
               });
@@ -175,7 +181,9 @@
             this.image.style.opacity = 1;
           },
           err: function() {
-            this.host.style.display = 'none';
+            //this.host.style.display = 'none';
+            this.image.style.backgroundImage = 'url(no-image.png)';
+            this.image.style.opacity = 1;
           }
         }
         

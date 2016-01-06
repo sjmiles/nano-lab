@@ -15,7 +15,8 @@
     flex-wrap: wrap;
     /**/
     max-width: /*(2*396 + 4*8)*/ 824px;
-    margin: 8px auto;
+    margin: 0 auto;
+    padding: 16px;
   }
 
   [grid-cell] {
@@ -24,17 +25,23 @@
     flex: none;
     /**/
     box-sizing: border-box;
-    width: 396px;
-    height: /* 3 * colWidth / 4 */ 297px;
-    margin: 8px;
+    /*
+    width: 64px;
+    height: 64px;
+    margin: 10px;
+    */
+    width: 128px;
+    height: 128px;
+    margin: 12px;
     overflow: hidden;
   }
 
+  /*  
   [grid-cell]:nth-of-type(3n - 2) {
-    width: calc(100% - 16px);
-    /* large item has width/height ratio 2:1 */
-    height: 412px;
+    width: calc(50% - 16px);
+    height: 64px;
   }
+  */
 
   /* narrow layout */
   @media (max-width: 1208px) {

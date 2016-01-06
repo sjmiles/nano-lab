@@ -1,0 +1,60 @@
+<dom-module id="categories-view">
+  <style>
+    categories-view {
+      display: block;
+      text-align: left;
+    }
+    categories-view [grid-cell] {
+      background-color: white;
+      text-decoration: none;
+      color: inherit;
+      font-size: 0.6em;
+      padding: 8px;
+    }
+  </style>
+  <template>
+    <a grid-cell horizontal center layout href="{{href}}">
+      <span>{{name}}</span>
+    </a>
+  </template>
+  <script>
+    document.registerElement('categories-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.grid = this.appendChild(document.createElement('grid-layout'));
+          this.render();
+          Nano.property(this, 'categories');
+        },
+        set categories(categories) {
+          this.render(categories);
+        },
+        render: function(categories) {
+          this.clear();
+          if (!categories) {
+            categories = [];
+            for (var i=0; i<25; i++) {
+              categories.push({name: ' '});
+            }
+          }
+          this.grid.appendChild(this.renderCategories(categories));
+        },
+        clear: function() {
+          this.grid.innerText = '';
+        },
+        renderCategories: function(categories) {
+          var frag = document.createDocumentFragment();
+          categories.forEach(function(c) {
+            var splinter = document.createDocumentFragment();
+            Annotations.stamp('categories-view', splinter).set({
+              href: '?' + c.name,
+              name: c.name
+            });
+            frag.appendChild(splinter);
+          });
+          return frag;
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -76,6 +76,9 @@
   };
 
   var updateBindings = function(container, notes, name, value) {
+    if (value === null || value === undefined) {
+      value = '';
+    }
     doForBindings(container, notes, notes.mustaches, name, function(b, node) {
       if (b.property === 'style%') {
         var s = node.style;
@@ -155,10 +158,11 @@
       //console.group(node.localName, node.id || '');
       for (var a$=node.attributes, i=a$.length-1, a, obj; i>=0 && (a=a$[i]); i--) {
         if (annotateMustache(node, a.name, a.value, locator, root)) {
-          a.value = '';
-        } 
-        else if (annotateEvent(node, a.name, a.value, locator, root)) {
+        } else if (annotateEvent(node, a.name, a.value, locator, root)) {
+        } else {
+          continue;
         }      
+        node.removeAttribute(a.name);
       }
       //console.groupEnd();
     }

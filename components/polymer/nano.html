@@ -8,6 +8,11 @@
   });
   
   window.Nano = {
+    acquire: function(element/*, name, name, name*/) {
+      for (var i=1; i<arguments.length; i++) {
+        this.property(element, arguments[i]);
+      }
+    },
     property: function(element, name) {
       var value;
       if (element.hasOwnProperty(name)) {
