@@ -35,6 +35,8 @@
         this.x--;
         if (this.x <= -this.count) {
           this.x = 0;
+        } else if (this.x == -this.count+1) {
+          this.x = 1;
         }
         this.update();
         /*
