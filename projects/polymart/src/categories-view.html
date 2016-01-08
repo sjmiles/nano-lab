@@ -8,12 +8,18 @@
       background-color: white;
       text-decoration: none;
       color: inherit;
-      font-size: 0.6em;
-      padding: 8px;
+      font-size: 0.9em;
+      text-align: center;
+    }
+    categories-view [grid-cell] > img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 8px;
     }
   </style>
   <template>
-    <a grid-cell horizontal center layout href="{{href}}">
+    <a grid-cell vertical center layout href="{{href}}">
+      <img width="144" height="144" src="//i5.walmartimages.com/dfw/4ff9c6c9-4542/k2-_cb52ae11-70a5-4a3c-809f-85912da9d059.v1.jpg?odnWidth=144&odnHeight=144">
       <span>{{name}}</span>
     </a>
   </template>
