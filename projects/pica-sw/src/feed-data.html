@@ -54,6 +54,7 @@
 
 <script>
   document.registerElement('feed-data', {
+    
     prototype: {
       
       __proto__: HTMLElement.prototype,
@@ -153,6 +154,8 @@
         // cache normalized feed data
         this.dispatchEvent(new CustomEvent('feed-changed', {bubbles: false, detail: feed}));
       }
+      
     }
+    
   });
 </script>

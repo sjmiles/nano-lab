@@ -19,7 +19,7 @@
   </style>
   <template>
     <a grid-cell vertical center layout href="{{href}}">
-      <img width="144" height="144" src="//i5.walmartimages.com/dfw/4ff9c6c9-4542/k2-_cb52ae11-70a5-4a3c-809f-85912da9d059.v1.jpg?odnWidth=144&odnHeight=144">
+      <img width="144" height="144" src="mart/proxy.php?http://i5.walmartimages.com%2Fdfw%2F4ff9c6c9-4542%2Fk2-_cb52ae11-70a5-4a3c-809f-85912da9d059.v1.jpg%3FodnWidth%3D144%26odnHeight%3D144">
       <span>{{name}}</span>
     </a>
   </template>
@@ -51,9 +51,10 @@
         renderCategories: function(categories) {
           var frag = document.createDocumentFragment();
           categories.forEach(function(c) {
+            var route = encodeURIComponent('{"category":"' + c.name + '", "categoryId":"' +  c.id + '"}');
             var splinter = document.createDocumentFragment();
             Annotations.stamp('categories-view', splinter).set({
-              href: '?' + c.name,
+              href: '?' + route,
               name: c.name
             });
             frag.appendChild(splinter);

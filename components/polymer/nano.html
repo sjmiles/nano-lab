@@ -8,6 +8,22 @@
   });
   
   window.Nano = {
+    create: function(tag, props) {
+      var elt = document.createElement(tag, props.is);
+      if (props) {
+        for (var n in props) {
+          var v = props[n];
+          if (n[0] === '@') {
+            elt.addEventListener(n.slice(1), v);
+          } else if (n[0] === '$') {
+            elt.setAttribute(n.slice(1), v);
+          } else {
+            elt[n] = v;
+          }
+        }
+      }
+      return elt;
+    },
     acquire: function(element/*, name, name, name*/) {
       for (var i=1; i<arguments.length; i++) {
         this.property(element, arguments[i]);

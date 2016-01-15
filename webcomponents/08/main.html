@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-8</title>
+  
+  <link rel="import" href="src/imports.html">
+  
+</head>
+<body>
+
+  <app-view></app-view>
+
+  <template>
+    <simple-router on-route-change="onRouteChange"></simple-router> 
+    <primer-data on-content-change="onContentChange"></primer-data>
+    
+    <app-content>
+      <content-column>
+        <content-title><span>{{$You are here}}</span>: <span>{{title}}</span></content-title>
+        <here-view style="display: none;">
+          <some-content content="{{content}}"></some-content>
+        </here-view>
+        <there-view style="display: none;">
+          <div style='padding: 16px;'>Nothing to see here.</div>
+        </there-view>
+      </content-column>
+    </app-content>
+    <nav-bar sections="Here There Somewhere Nowhere"></nav-bar>
+   
+    <service-worker href="sw.js"></service-worker>
+    <google-analytics></google-analytics>
+  </template>
+  
+  <script>
+    document.registerElement('app-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.dom = Nano.prepare(document.querySelector('template'));
+          this.dom.stamp(this);
+          this.views = document.createElement('nano-views');
+          this.views.baseUrl = 'src/views/';
+        },
+        onContentChange: function(e) {
+          this.dom.set('content', e.detail || '(no content)');
+        },
+        onRouteChange: function(e) {
+          var route = e.detail;
+          switch(route) {
+            case 'Here':
+            case 'There':
+            case 'Anywhere':
+            case 'Nowhere':
+              break;
+            default:
+              route = 'Here';
+              break;
+          }
+          this.dom.set('title', Nano.translate(e.detail || 'Here'));
+          this.view = route.toLowerCase() + '-view';
+        },
+        set view(view) {
+          this.views.select(view, this.querySelector(view), this.querySelector('content-column'));
+        }
+      }
+    });
+  </script>
+  
+</body>
+</html>

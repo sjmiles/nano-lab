@@ -43,7 +43,7 @@
     // TODO(sjmiles): container must be empty for the node locator to function.
     // Consider stamping instead into a document fragment and locating all
     // nodes of interest as a preprocess step.
-    //container.textContent = '';
+    container.textContent = '';
     // clone nodes
     container.appendChild(document.importNode(template.content, true));
     // attach listeners
@@ -60,7 +60,7 @@
       }
     };
   };
-
+  
   var set = function(container, notes, name, value) {
     if (value === undefined) {
       updateManyBindings(container, notes, name)
@@ -109,7 +109,7 @@
   var _listen = function(node, name, host, handler) {
     node.addEventListener(name, function(e) { 
       if (!host[handler]) {
-        console.warn('handler `' + handler + '` for event `' + name + '` not defined on host `' + (host && host.localName) + '`');
+        //console.warn('handler `' + handler + '` for event `' + name + '` not defined on host `' + (host && host.localName) + '`');
       } else {
         host[handler](e);
       }

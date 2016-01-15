@@ -1,0 +1,42 @@
+<dom-module id="search-view">
+
+  <style>
+    search-view {
+      display: block;
+    }
+    search-view product-view {
+      padding: 16px;
+    }
+  </style>
+
+  <script>
+    document.registerElement('search-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.render([{},{},{},{},{}]);
+        },
+        set query(query) {
+          this.render([{},{},{},{},{}]);
+          this._query = query;
+          var ajax = document.createElement('nano-ajax');
+          ajax.url = "mart/search.php?" + query;
+          ajax.addEventListener('response', function(e) {
+            if (query == this._query) {
+              this.render(e.detail.items);
+            }
+          }.bind(this));
+          //this.insertBefore(Nano.create('nano-spinner', {active: true}), this.firstElementChild);
+        },
+        render: function(items) {
+          this.textContent = '';
+          items.forEach(function(item) {
+            var pv = this.appendChild(document.createElement('product-view'));
+            pv.product = item;
+          }.bind(this));
+        }
+      }
+    });
+  </script>
+
+</dom-module>

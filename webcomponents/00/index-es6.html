@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-0-es6</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+  
+</head>
+<body>
+
+  <aaron-one></aaron-one>
+  
+  <script>
+    document.registerElement('aaron-one', 
+      class extends HTMLElement {
+        createdCallback() {
+          this.innerHTML = 'My name is <b>Aaron(1)</b>';
+        }
+      }
+    );
+  </script> 
+ 
+</body>
+</html>

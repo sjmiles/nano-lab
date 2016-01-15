@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-1-es6</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+  
+</head>
+<body>
+
+  <service-worker href="sw.js"></service-worker>
+  
+  <script>
+    document.registerElement('service-worker', 
+      class extends HTMLElement {
+        createdCallback() {
+          var href = this.getAttribute('href');
+          var scope = this.getAttribute('scope') || '.';
+          this.register(href, scope);
+        }
+        register(href, scope) {
+          if (href && ('serviceWorker' in navigator)) {
+            navigator.serviceWorker.register(href, {scope: scope}).then(function(ServiceWorkerRegistration) {
+              console.log('ServiceWorker is Go');
+            });
+          }
+        }
+      }
+    );
+  </script>
+  
+</body>
+</html>

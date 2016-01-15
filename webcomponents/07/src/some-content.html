@@ -1,0 +1,24 @@
+<style>
+  some-content {
+    padding: 16px;
+  }
+</style>
+
+<script>
+  document.registerElement('some-content', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        // in case we've been assigned data before we upgraded
+        if (this.hasOwnProperty('content')) {
+          var content = this.content;
+          delete this.content;
+          this.content = content;
+        }
+      },
+      set content(content) {
+        this.innerHTML = content;
+      }
+    }
+  });
+</script>

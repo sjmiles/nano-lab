@@ -6,7 +6,7 @@
 
   nav-bar {
     white-space: pre;
-    background-color: #607d8b;
+    background-color: #007dc6;
     color: whitesmoke;
     position: fixed;
     top: 0;
@@ -21,25 +21,14 @@
     display: block;
     padding-left: 256px;
   }
+  view-panel {
+    display: none;
+    transition: transform 300ms ease-in-out;
+  }
 
   icon[menu] {
     display: none;
-  }
-
-  /* narrow mode */
-  @media (max-width: 512px) {
-    nav-bar {
-      left: -256px;
-    }
-    nav-bar[open] {
-      left: 0px;
-    }
-    content-view {
-      padding-left: 0px;
-    }
-    icon[menu] {
-      display: inline-block;
-    }
+    display: inline-block;
   }
 
   icon {
@@ -53,7 +42,7 @@
     display: block;
     position: fixed !important;
     top: 0;
-    left: 0;
+    left: 256px;
     right: 0;
     height: 64px;
     padding: 0 16px;
@@ -67,32 +56,136 @@
 
   app-container {
     display: block;
-    background-color: whitesmoke;
+    background-color: white;
     max-width: 600px;
     margin: 64px auto 0;
+    overflow-x: hidden;
   }
 
+  /* narrow mode */
+  @media (max-width: 512px) {
+    nav-bar {
+      left: -256px;
+    }
+    nav-bar[open] {
+      left: 0px;
+    }
+    app-bar {
+      left: 0px;
+    }
+    content-view {
+      padding-left: 0px;
+    }
+    icon[menu] {
+      display: inline-block;
+    }
+  }
+  
+  search-bar {
+    padding: 16px;
+  }
+  search-decor {
+    display: block;
+    border: 1px solid gray;
+    border-radius: 16px;
+    padding: 4px 8px;
+  }
+  search-decor input {
+    margin-left: 8px;
+    border: none;
+  }
+  search-decor input:focus {
+    margin-left: 8px;
+    border: none;
+    outline: none;
+  }
+  
+  sign-up {
+    padding: 16px 0;
+    text-align: center;
+    border-top: 1px solid #eee;
+  }
+  sign-up input {
+    height: 22px;
+    margin: 0 6px;
+  }
+  sign-up a {
+    background-color: #ffc120 !important;
+    padding: 6px 12px !important;
+    border-radius: 2px;
+  }
+  sign-up [form] {
+    padding: 4px;
+    white-space: nowrap;
+  }
+  footer-view {
+    font-size: 0.8em;
+    margin-top: 16px;
+    padding-bottom: 16px;
+    background-color: #f2f8fd;
+  }
+  footer-view [footer-links] {
+    text-align: center;
+  }
+  footer-view [footer-links] a {
+    white-space: nowrap;
+    padding: 8px 14px !important;
+    color: #007dc6 !important;
+  }
 </style>
 
 <dom-module id="polymart-view">
 
   <template>
+    <simple-router on-route-change="onRouteChange"></simple-router>
     
     <content-view>
-      
       <app-container>
-        <home-view></home-view>
+              
+        <search-bar vertical middle layout>
+          <search-decor horizontal layout>
+            <icon search></icon>
+            <input flex xon-blur="searchBlur" on-keypress="searchKey">
+          </search-decor>
+        </search-bar>
+        
+        <view-panel home>
+          <home-view categories="{{categories}}"></home-view>
+        </view-panel>
+        <view-panel category>
+          <category-view category="{{category}}" query="{{categoryId}}"></category-view>
+        </view-panel>
+        <view-panel search>
+          <search-view query="{{query}}"></search-view>
+        </view-panel>
+              
+        <footer-view vertical middle layout>
+          <sign-up>
+            <b>Signup and save!</b>
+            <span form><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
+          </sign-up>
+
+          <div footer-links>
+            <a is="nano-anchor">Help</a>
+            <a is="nano-anchor">Feedback</a>
+            <a is="nano-anchor">Terms of Use</a>
+            <a is="nano-anchor">Privacy and Security</a>
+          </div>
+        </footer-view>
+        
       </app-container>
       
       <app-bar horizontal center layout shadow>
-        <icon menu-white tabindex="0" on-click="menuButtonTap"></icon>
+        <icon menu-white tabindex="1" on-click="menuButtonTap"></icon>
         <h3 flex>Polymart</h3>
-        <icon cart-white tabindex="0" on-click="cartTap"></icon>
+        <icon cart-white tabindex="2" on-click="cartTap"></icon>
       </app-bar>
       
     </content-view>
+
+    <nano-ajax url="mart/taxonomy.php" on-response="onTaxonomyResponse"></nano-ajax>
     
-    <nav-bar></nav-bar>
+    <nav-bar sections="{{categories}}"></nav-bar>
     
   </template>
 
@@ -101,22 +194,53 @@
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
-          this.root = Annotations.stamp('polymart-view', this);
+          this.dom = Annotations.stamp('polymart-view', this);
+          this.views = {home: 0, search: 0, category: 0};
+          this.view = 'home';
         },
-        // lazy views
         set view(view) {
-          //console.log('setView:', view);
-          Nano.import('src/' + view + '-view.html');
-          if (!this._views) {
-            this._views = {};
+          if (this._view === view) {
+            return;
           }
-          this._views[view] = true;
-          for (var n in this._views) {
-            var impl = this.root.$('#' + n);
-            var active = (view === n);
-            impl.active = active;
-            impl.style.display = active ? '' : 'none';
+          var views = this.views;
+          if (view in views) {
+            if (this._view) {
+              views[this._view] = document.body.scrollTop;
+              var s = this._viewPanel.style;
+              s.display = '';
+              s.transform = 'translate3d(-100%, 0, 0)';
+            }
+            this._view = view;
+            this._viewPanel = this.querySelector('view-panel[' + view + ']');
+            var s = this._viewPanel.style;
+            s.transform = 'translate3d(100%, 0, 0)';
+            s.display = 'block';
+            this._viewPanel.offsetWidth;
+            s.transform = 'translate3d(0, 0, 0)';
+            document.body.scrollTop = views[view];
           }
+        },
+        searchKey: function(e) {
+          if (e.keyCode === 13) {
+            this.view = 'search';
+            this.dom.set('query', e.target.value);
+          }
+        },
+        menuButtonTap: function() {
+          this.view = this._view === 'home' ? 'search' : 'home';
+        },
+        onTaxonomyResponse: function(e) {
+          if (e.detail) {
+            this.dom.set({categories: e.detail.categories});
+          }
+        },
+        onRouteChange: function(e) {
+          var route = JSON.parse(decodeURIComponent(e.detail));
+          if (route.category) {
+            this.view = 'category';
+            this.dom.set(route);
+          }
+          console.log(route);
         }
       }  
     });

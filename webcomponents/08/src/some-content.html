@@ -1,0 +1,20 @@
+<style>
+  some-content {
+    padding: 16px;
+  }
+</style>
+
+<script>
+  document.registerElement('some-content', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        // in case we've been assigned data before we upgraded
+        Nano.acquire('content');
+      },
+      set content(content) {
+        this.innerHTML = content;
+      }
+    }
+  });
+</script>

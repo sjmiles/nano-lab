@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-5</title>
+  
+  <link rel="import" href="src/imports.html">
+  
+</head>
+<body>
+
+  <simple-router></simple-router>
+
+  <app-view>
+    <app-content>
+      <content-column>
+        <content-title></content-title>
+        <some-content></some-content>
+      </content-column>
+    </app-content>
+    <nav-bar sections="Here There Somewhere Nowhere"></nav-bar>
+  </app-view>
+
+  <google-analytics></google-analytics>
+  
+  <script>
+    document.querySelector('simple-router').addEventListener('route-change', function(e) {
+      var route = e.detail || 'Here';
+      document.querySelector('content-title').textContent = route;
+    });
+  </script>
+</body>
+</html>

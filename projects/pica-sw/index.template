@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>PICA-SW</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      color: #333;
+      background-color: #d5d5d5;
+    }
+  </style>
+  
+  <link href="critical.html" rel="import">
+  
+</head>
+<body>
+
+  <nano-serviceworker href="sw.js"></nano-serviceworker> 
+  
+  <pica-view></pica-view>
+  
+</body>
+</html>

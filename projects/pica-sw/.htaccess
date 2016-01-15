@@ -1,1 +1,5 @@
 Header set Service-Worker-Allowed "/"
+Header set Access-Control-Allow-Headers "Content-Type"
+
+RewriteEngine On
+RewriteRule ^index.sw.html index.php [L]

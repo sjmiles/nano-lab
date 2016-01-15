@@ -1,0 +1,24 @@
+<style>
+  nav-bar {
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  document.registerElement('nav-bar', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      attachedCallback: function() {
+        this.sections = (this.getAttribute('sections') || 'Default').split(' ');
+      },
+      set sections(sections) {
+        var html = '<ul>';
+        for (var i=0; i<sections.length; i++) {
+          html += '<li><a href="?' + sections[i] + '">' + sections[i] + '</a></li>';
+        }
+        html += '</ul>';
+        this.innerHTML = html;
+      }
+    }
+  });
+</script>

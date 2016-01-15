@@ -1,0 +1,42 @@
+<script>
+  document.registerElement('simple-router', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.parseLocation();
+        window.addEventListener('popstate', this.parseLocation.bind(this));
+        document.addEventListener('click', this.jackClicks.bind(this));
+      },     
+      attachedCallback: function() {
+        this.notify();
+      },
+      // extract route from url (url?<route>)
+      parseLocation: function() {
+        this.route = location.search.slice(1);
+      },
+      // convert SPA clicks to pushState changes
+      jackClicks: function(e) {
+        var a;
+        e.path.some(function(ac) {
+          return (ac.localName === 'a') && (a=ac);
+        });
+        if (a && a.getAttribute('href').indexOf('://') < 0) {
+          e.preventDefault();
+          history.pushState(null, '', a.href);
+          this.parseLocation();
+        }      
+      },
+      // construct state from route
+      set route(route) {
+        this._route = route;
+        this.notify();
+      },
+      get route() {
+        return this._route;
+      },
+      notify: function() {
+        this.dispatchEvent(new CustomEvent('route-change', {detail: this.route}));
+      }
+    }
+  });
+</script>

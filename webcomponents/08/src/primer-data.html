@@ -1,0 +1,13 @@
+<script>
+  document.registerElement('primer-data', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.content = 'Some kine content brah.';
+      },
+      attachedCallback: function() {
+        this.dispatchEvent(new CustomEvent('content-change', {detail: this.content}));
+      }
+    }
+  });
+</script>

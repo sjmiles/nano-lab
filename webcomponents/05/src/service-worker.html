@@ -1,0 +1,37 @@
+<script>
+  document.registerElement('service-worker', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        var href = this.getAttribute('href');
+        var scope = this.getAttribute('scope') || '.';
+        this.register(href, scope);
+      },
+      register: function(href, scope) {
+        if (href && ('serviceWorker' in navigator)) {
+          navigator.serviceWorker.register(href, {scope: scope}).then(function(ServiceWorkerRegistration) {
+            //this.notify('Abe(1) Says', 'ServiceWorker is Go');
+          }.bind(this));
+        }
+      },
+      canNotify: function() {
+        return Boolean(window.Notification);
+      },
+      notify: function(title, body, icon, tag) {
+        if (title && body) {
+          if (!this.canNotify()) {
+            alert(title + '\n\n' + body);
+          } else {
+            Notification.requestPermission(function(result) {
+              if (result === 'granted') {
+                navigator.serviceWorker.ready.then(function(worker) {
+                  worker.showNotification(title, {body: body, icon: icon, tag: tag || 'abe-says'});
+                });
+              }
+            });        
+          }
+        }
+      }
+    }
+  });
+</script>

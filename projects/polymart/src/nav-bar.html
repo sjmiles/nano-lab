@@ -1,0 +1,28 @@
+<style>
+  nav-bar {
+    cursor: pointer;
+    padding-top: 64px;
+    line-height: 140%;
+  }
+  a {
+    color: white;
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  document.registerElement('nav-bar', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      set sections(sections) {
+        var html = '<ul>';
+        for (var i=0; i<sections.length; i++) {
+          var route = encodeURIComponent('{"category":"' + sections[i].name + '", "categoryId":"' +  sections[i].id + '"}');
+          html += '<li><a href="?' + route + '">' + sections[i].name + '</a></li>';
+        }
+        html += '</ul>';
+        this.innerHTML = html;
+      }
+    }
+  });
+</script>

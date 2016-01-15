@@ -1,0 +1,46 @@
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+  }
+  app-view {
+    display: block;
+    background: whitesmoke;
+  }
+  app-content {
+    display: block;
+    padding-left: 240px;
+  }
+  content-column {
+    display: block;
+    margin: 0 auto;
+    max-width: 720px;
+    min-width: 320px;
+    height: 1000px;
+    background: white;
+  }
+  content-title {
+    display: block;
+    font-size: 2em;
+    padding: 16px;
+  }
+  some-content {
+    display: block;
+  }
+  nav-bar {
+    display: block;
+    position: fixed;
+    width: 240px;
+    top: 0;
+    bottom: 0;
+    background: silver;
+  }
+  @media screen and (max-width: 640px) {
+    nav-bar {
+      display: none;
+    }
+    app-content {
+      padding-left: 0;
+    }
+  }
+</style>

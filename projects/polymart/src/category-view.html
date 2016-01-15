@@ -1,0 +1,63 @@
+<dom-module id="category-view">
+
+  <style>
+    category-view {
+      display: block;
+    }
+    category-view product-view {
+      padding: 16px;
+      transition: opacity 200ms ease-in-out;
+    }
+  </style>
+
+  <script>
+    document.registerElement('category-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.render([{},{},{},{},{}]);
+        },
+        set query(query) {
+          document.body.scrollTop = 0;
+          this.render([{},{},{},{},{}]);
+          this._query = query;
+          var ajax = document.createElement('nano-ajax');
+          ajax.url = "mart/category.php?" + query;
+          ajax.addEventListener('response', function(e) {
+            if (query == this._query) {
+              console.log(e.detail);
+              this.render(e.detail.items);
+            }
+          }.bind(this));
+          //this.insertBefore(Nano.create('nano-spinner', {active: true}), this.firstElementChild);
+        },
+        render: function(items) {
+          //this.textContent = '';
+          var s = this.querySelector('nano-spinner');
+          if (s) {
+            s.remove();
+          }
+          /*
+          var fade = function(pv) {
+            pv.style.transition = 'none';
+            pv.style.opacity = 0;
+            pv.offsetHeight;
+            pv.style.transition = '';
+            pv.style.opacity = 1;
+          };
+          */
+          var pv = this.querySelector('product-view');
+          items.forEach(function(item) {
+            //if (pv && item.name) {
+            //  fade(pv);
+            //}
+            pv = pv || this.appendChild(document.createElement('product-view'));
+            pv.product = item;
+            pv = pv.nextElementSibling;
+          }.bind(this));
+        }
+      }
+    });
+  </script>
+
+</dom-module>

@@ -1,0 +1,24 @@
+<dom-module id="somewhere-view">
+  
+  <template>
+    <some-content content="{{content}}"></some-content>
+  </template>
+
+  <script>
+    document.registerElement('somewhere-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.dom = Nano.prepare('somewhere-view');
+          this.dom.stamp(this);
+          // in case we've been assigned data before we upgraded
+          Nano.acquire('content');
+        },
+        set content(content) {
+          this.dom.set('content', content);
+        }
+      }
+    });
+  </script>
+  
+</dom-module>

@@ -31,7 +31,7 @@ $payload = "$prereqs $critical $contextual";
 $index = file_get_contents('index.html');
 
 // replace client-side load instruction with constructed payload
-$index = str_replace('<link rel="import" href="critical.html">', $payload, $index);
+$index = str_replace('<link href="critical.html" rel="import">', $payload, $index);
 
 // serve
 echo $index;

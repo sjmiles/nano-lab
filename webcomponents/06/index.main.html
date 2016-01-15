@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-6</title>
+  
+  <link rel="import" href="src/imports.html">
+  
+</head>
+<body>
+
+  <template>
+    <simple-router on-route-change="routeChange"></simple-router> 
+    <app-view>
+      <app-content>
+        <content-column>
+          <content-title><span>{{$You are here}}</span>: <span>{{title}}</span></content-title>
+          <some-content></some-content>
+        </content-column>
+      </app-content>
+      <nav-bar sections="Here There Somewhere Nowhere"></nav-bar>
+    </app-view>
+    <service-worker href="sw.js"></service-worker>
+    <google-analytics></google-analytics>
+  </template>
+  
+  <script>
+    var l10n = {
+      es: {
+        'You are here': 'Tú estás aquí',
+        'Somewhere': 'Algun lado',
+        'Here': 'Aquí',
+        'Nowhere': 'En ninguna parte',
+        'There': 'Ya está'
+      }
+    };
+    var locale = 'es';
+    Annotations.translate = function(n) {
+      return l10n[locale][n] || n;
+    };
+    var controller = Annotations.prepare(document.querySelector('template'));
+    // stamping is a separate step so that controller is available to use in listeners
+    controller.stamp(document.body, {
+      routeChange: function(e) {
+        controller.set('title', Annotations.translate(e.detail || 'Here'));
+      }
+    });
+  </script>
+  
+</body>
+</html>

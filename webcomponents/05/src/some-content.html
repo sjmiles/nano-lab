@@ -1,0 +1,16 @@
+<style>
+  some-content {
+    padding: 16px;
+  }
+</style>
+
+<script>
+  document.registerElement('some-content', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      attachedCallback: function() {
+        this.innerHTML = 'Some kine content brah.';
+      }
+    }
+  });
+</script>

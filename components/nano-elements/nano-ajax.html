@@ -11,7 +11,7 @@
       },
       onLoad: function(e) {
         var xhr = e.target;
-        console.log(xhr.response);
+        //console.log(xhr.response);
         this.dispatchEvent(new CustomEvent('response', {bubbles: false, detail: xhr.response}));
       },
       set url(url) {

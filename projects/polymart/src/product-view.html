@@ -8,8 +8,10 @@
     }
     product-view [name] {
       font-size: 1.2em;
-      line-height: 1.4;
       font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     product-view [price] {
       font-size: 1.4em;
@@ -27,6 +29,10 @@
       border-radius: 2px;
       font-size: 1.2em !important;
     }
+    product-view a[disabled] {
+      background-color: whitesmoke !important;
+      color: silver;
+    }
     product-view [thumb] {
       width: 92px;
       background: white no-repeat left center /contain;
@@ -41,15 +47,11 @@
     product-view [shortDesc] {
       display: block;  /* fallback when -webkit-box is not supported */
       display: -webkit-box;
-
-      padding-top: 8px;
-
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
-
       height: calc(3 * 1.3 * 11px); /* fallback when -webkit-line-clamp is not supported */
+      padding-top: 8px;
       overflow: hidden;
-
       font-size: 11px;
       line-height: 1.3;
     }
@@ -57,16 +59,16 @@
   <template>
     <div horizontal layout>
       <div thumb noflex style%="{{thumbStyle}}"></div>
-      <div flex info>
-        <div name>{{name}}</div>
-        <div horizontal center layout>
+      <div flex info style="height: 115px;">
+        <div name style="height: 18px;">{{name}}</div>
+        <div horizontal center layout style="height: 12px;">
           <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
         </div>
-        <div horizontal center layout>
-          <b price><span>{{$$}}</span><span>{{salePrice}}</span></b>(<span>{{$Reg. $}}</span><span>{{msrp}}</span>)
+        <div horizontal center layout style="height: 18px;">
+          <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
         </div>
         <div>
-          <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick">Buy</a>
+          <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick" disabled="{{disabled}}">Buy</a>
         </div>
       </div>
     </div>
@@ -81,22 +83,30 @@
           Nano.property(this, 'product');
         },
         set product(product) {
+          var proxy = function(url) {
+            return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
+          }
           if (product) {
-            this.dom.set({
+            var image = product.thumbnailImage || product.mediumImage; 
+            // adapt view model
+            var model = {
               name: product.name,
-              customerRating: Number(product.customerRating).toFixed(1),
-              customerRatingImage: product.customerRatingImage,
-              numReviews: '(' + product.numReviews + ')',
-              salePrice: product.salePrice,
-              msrp: product.msrp,
+              customerRatingImage: proxy(product.customerRatingImage || ''),
+              salePrice: product.salePrice ? '$' + product.salePrice : '',
+              msrp: product.msrp ? '(Reg $' + product.msrp + ')' : '',
               addToCartUrl: product.addToCartUrl,
-              //shortDescription: product.shortDescription,
-              thumbStyle: {backgroundImage: 'url("' + product.mediumImage + '")'}
-            });
+              thumbStyle: {backgroundImage: 'url("' + (proxy(image) || 'no-image-small.png') + '")'}
+            };
+            model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')';
+            model.customerRating = isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1);
+            // TODO(sjmiles): don't remember what this is for
             var txt = document.createElement("textarea");
             txt.innerHTML = product.shortDescription || product.longDescription || '';
-            //this.dom.$('[shortDesc]').innerHTML = txt.value; */
-            this.dom.set('shortDescription', txt.textContent.replace(/<(?:.|\n)*?>/gm, ''));
+            model.shortDescription = txt.textContent.replace(/<(?:.|\n)*?>/gm, '');
+            // render model
+            this.dom.set(model);
+            // special
+            Nano.boolAttribute(this.querySelector('a'), 'disabled', !product.name);
           }
         },
         buyClick: function(e) {

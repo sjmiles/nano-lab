@@ -3,24 +3,6 @@
     display: block;
     background-color: white;
   }
-  search-bar {
-    padding: 16px;
-  }
-  search-decor {
-    display: block;
-    border: 1px solid gray;
-    border-radius: 16px;
-    padding: 4px 8px;
-  }
-  search-decor input {
-    margin-left: 8px;
-    border: none;
-  }
-  search-decor input:focus {
-    margin-left: 8px;
-    border: none;
-    outline: none;
-  }
   [hero] {
     height: 240px;
     background-color: white;
@@ -53,38 +35,6 @@
   categories-view {
     color: #007dc6;
   }
-  sign-up {
-    padding: 16px 0;
-    text-align: center;
-    border-top: 1px solid #eee;
-  }
-  sign-up input {
-    height: 22px;
-    margin: 0 6px;
-  }
-  sign-up a {
-    background-color: #ffc120 !important;
-    padding: 6px 12px !important;
-    border-radius: 2px;
-  }
-  sign-up [form] {
-    padding: 4px;
-    white-space: nowrap;
-  }
-  footer-view {
-    font-size: 0.8em;
-    margin-top: 16px;
-    padding-bottom: 16px;
-    background-color: #f2f8fd;
-  }
-  footer-view [footer-links] {
-    text-align: center;
-  }
-  footer-view [footer-links] a {
-    white-space: nowrap;
-    padding: 8px 14px !important;
-    color: #007dc6 !important;
-  }
   h3 {
     margin: 8px 16px;
     font-size: 1.2em;
@@ -107,13 +57,6 @@
     
     <div vertical layout>
       
-      <search-bar vertical middle layout>
-        <search-decor horizontal layout>
-          <icon search></icon>
-          <input flex>
-        </search-decor>
-      </search-bar>
-      
       <nano-carousel hero style%="{{carouselStyle}}" vertical middle layout></nano-carousel>
 
       <h3>Other popular items</h3>
@@ -130,25 +73,10 @@
 
       <categories-view vertical middle layout categories="{{categories}}"></categories-view>
 
-      <footer-view vertical middle layout>
-        <sign-up>
-          <b>Signup and save!</b>
-          <span form><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
-        </sign-up>
-
-        <div footer-links>
-          <a is="nano-anchor">Help</a>
-          <a is="nano-anchor">Feedback</a>
-          <a is="nano-anchor">Terms of Use</a>
-          <a is="nano-anchor">Privacy and Security</a>
-        </div>
-      </footer-view>
-
     </div>
 
     <nano-ajax url="mart/trending.php" on-response="onTrendingResponse"></nano-ajax>
     <nano-ajax url="mart/vod.php" on-response="onVodResponse"></nano-ajax>
-    <nano-ajax url="mart/taxonomy.php" on-response="onTaxonomyResponse"></nano-ajax>
 
   </template>
 
@@ -157,19 +85,21 @@
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
-          this.root = Annotations.stamp('home-view', this);
-          this.root.set('carouselStyle', {opacity: 0});
+          this.dom = Annotations.stamp('home-view', this);
+          this.dom.set('carouselStyle', {opacity: 0});
+        },
+        set categories(categories) {
+          this.dom.set({categories: categories});
         },
         onVodResponse: function(e) {
-          this.root.set({vod: e.detail});
-        },
-        onTaxonomyResponse: function(e) {
-          if (e.detail) {
-            this.root.set({categories: e.detail.categories});
-          }
+          this.dom.set({vod: e.detail});
         },
         onTrendingResponse: function(e) {
-          var crsl = this.root.$('[hero]');
+          var proxy = function(url) {
+            return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
+          }
+          //
+          var crsl = this.dom.$('[hero]');
           crsl.textContent = '';
           if (e.detail) {
             var items = e.detail.items;
@@ -182,7 +112,7 @@
             crsl.start();
           }
           //
-          var pc = this.root.$('product-carousel');
+          var pc = this.dom.$('product-carousel');
           pc.textContent = '';
           if (e.detail) {
             var items = e.detail.items;
@@ -192,7 +122,7 @@
               Annotations.stamp('mini-view', frag).set({
                 price: '$' + (item.salePrice || item.msrp || (item.bestMarketplacePrice && item.bestMarketplacePrice.price)),
                 name: item.name,
-                src: item.thumbnailImage
+                src: proxy(item.thumbnailImage)
               });
               pc.appendChild(frag);
             }

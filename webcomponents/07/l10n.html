@@ -1,0 +1,15 @@
+<script>
+  var l10n = {
+    es: {
+      'You are here': 'Tú estás aquí',
+      'Somewhere': 'Algun lado',
+      'Here': 'Aquí',
+      'Nowhere': 'En ninguna parte',
+      'There': 'Ya está'
+    }
+  };
+  var locale = 'es';
+  Annotations.translate = function(n) {
+    return l10n[locale][n] || n;
+  };
+</script>

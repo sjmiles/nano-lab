@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>wc-primer-5</title>
+  
+  <link rel="import" href="src/imports.html">
+  
+</head>
+<body>
+
+  <app-view>
+    <app-content>
+      <content-column>
+        <content-title></content-title>
+        <some-content></some-content>
+      </content-column>
+    </app-content>
+    <nav-bar sections="Here There Somewhere Nowhere"></nav-bar>
+  </app-view>
+
+  <google-analytics key="UA-72215906-1"></google-analytics>
+  <service-worker href="sw.js"></service-worker>
+  <simple-router></simple-router>
+
+  <script>
+    // where to put the route info
+    var title = document.querySelector('content-title');
+    // how to put the route info
+    var routeChanged = function(route) {
+      title.textContent = route;
+    }
+    // the router element
+    var router = document.querySelector('simple-router');
+    // listen to dynamic route changes
+    router.addEventListener('route-change', function(e) { 
+      routeChanged(e.detail); 
+    });
+    // capture the route synchronously (right now)
+    routeChanged(router.route || 'Here');
+  </script>
+
+</body>
+</html>
