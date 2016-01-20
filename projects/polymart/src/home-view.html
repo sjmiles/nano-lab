@@ -1,14 +1,14 @@
 <style> 
   home-view {
     display: block;
-    background-color: white;
   }
   [hero] {
     height: 240px;
-    background-color: white;
     transition: opacity 200ms ease-in-out;
   }
   product-view {
+    box-shadow: 0 1px 2px 1px rgba(0,0,0,0.25);
+    padding: 16px;
   }
   [hero] > div {
     padding: 16px;
@@ -16,10 +16,11 @@
   product-carousel {
     height: 116px;
     padding: 10px 0 20px;
-    margin: 0 8px;
+    margin-bottom: 24px;
     font-size: 0.7em;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    background-color: white;
   }
   product-carousel > div {
     width: 96px;
@@ -33,6 +34,7 @@
     padding: 4px 16px;
   }
   categories-view {
+    padding: 4px;
     color: #007dc6;
   }
   h3 {
