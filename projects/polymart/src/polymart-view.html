@@ -2,6 +2,7 @@
   
   polymart-view {
     display: block;
+    background-color: #f5f5f5;
   }
 
   nav-bar {
@@ -36,6 +37,7 @@
     width: 24px;
     height: 24px;
     color: white;
+    outline: none;
   }
 
   app-bar {
@@ -56,7 +58,6 @@
 
   app-container {
     display: block;
-    background-color: white;
     max-width: 600px;
     margin: 64px auto 0;
     overflow-x: hidden;
@@ -83,12 +84,15 @@
   
   search-bar {
     padding: 16px;
+    margin-bottom: 5px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
   }
   search-decor {
     display: block;
-    border: 1px solid gray;
+    border: 1px solid #ddd;
     border-radius: 16px;
     padding: 4px 8px;
+    background-color: white;
   }
   search-decor input {
     margin-left: 8px;
@@ -176,7 +180,7 @@
       </app-container>
       
       <app-bar horizontal center layout shadow>
-        <icon menu-white tabindex="1" on-click="menuButtonTap"></icon>
+        <icon arrow-back-white tabindex="1" on-click="menuButtonTap"></icon>
         <h3 flex>Polymart</h3>
         <icon cart-white tabindex="2" on-click="cartTap"></icon>
       </app-bar>
