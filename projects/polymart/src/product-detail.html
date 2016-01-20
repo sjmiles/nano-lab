@@ -1,95 +1,101 @@
-<dom-module id="product-view">
+<dom-module id="product-detail">
   <style>
-    product-view {
+    product-detail {
       display: block;
+      padding: 16px;
       text-align: left;
       font-size: 0.7em;
       background-color: white;
     }
-    product-view [name] {
+    product-detail [name] {
       font-size: 1.2em;
       font-weight: 600;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    product-view [price] {
+    product-detail [price] {
       font-size: 1.4em;
       margin-right: 6px;
     }
-    product-view [rating] {
+    product-detail [rating] {
       margin-right: 5px;
     }
-    product-view [numReviews] {
+    product-detail [numReviews] {
       color: #888;
     }
-    product-view a {
+    product-detail a {
       background-color: #ffc120 !important;
       padding: 6px 18px !important;
       border-radius: 2px;
       font-size: 1.2em !important;
     }
-    product-view div[disabled] a {
+    product-detail a[disabled] {
       background-color: whitesmoke !important;
       color: silver;
       pointer-events: none;
     }
-    product-view [thumb] {
-      width: 92px;
-      background: transparent no-repeat left center /contain;
+    product-detail [thumb] {
+      width: 280px;
+      height: 280px;
+      background: whitesmoke no-repeat left center /contain;
       margin-right: 16px;
     }
-    product-view [info] {
+    product-detail [info] {
       margin-right: 8px;
     }
-    product-view [info] > * {
+    product-detail [info] > * {
       margin-bottom: 10px;
     }
-    product-view [shortDesc] {
-      display: block;  /* fallback when -webkit-box is not supported */
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      height: calc(3 * 1.3 * 11px); /* fallback when -webkit-line-clamp is not supported */
+    product-detail [longDesc] {
+      display: block;
       padding-top: 8px;
-      overflow: hidden;
       font-size: 11px;
       line-height: 1.3;
     }
   </style>
   <template>
+    <div name>{{name}}</div>
+    <div horizontal center layout style="height: 12px;">
+      <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
+    </div>
+    <div thumb noflex style%="{{thumbStyle}}"></div>
     <div horizontal layout>
-      <div thumb noflex style%="{{thumbStyle}}"></div>
-      <div flex info style="height: 115px;">
-        <div name style="height: 18px;">{{name}}</div>
-        <div horizontal center layout style="height: 12px;">
-          <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
-        </div>
+      <div flex info Xstyle="height: 115px;">
         <div horizontal center layout style="height: 18px;">
           <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
         </div>
         <div>
-          <a is="nano-anchor" href="{{infoUrl}}" target="_blank" on-click="infoClick" disabled="{{disabled}}">Info</a>
           <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick" disabled="{{disabled}}">Buy</a>
         </div>
       </div>
     </div>
-    <div shortDesc>{{shortDescription}}</div>
+    <div longDesc>{{longDescription}}</div>
   </template>
   <script>
-    document.registerElement('product-view', {
+    document.registerElement('product-detail', {
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
-          this.dom = Annotations.stamp('product-view', this);
-          Nano.property(this, 'product');
+          this.dom = Annotations.stamp('product-detail', this);
+          Nano.property(this, 'productid');
+        },
+        set productid(id) {
+          this.product = {};
+          Nano.create('nano-ajax', {
+            url: 'mart/lookup.php?' + id, 
+            '@response': function(e) { 
+              this.product = e.detail; 
+            }.bind(this)
+          });
         },
         set product(product) {
           var proxy = function(url) {
             return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
           }
           if (product) {
-            var image = product.thumbnailImage || product.mediumImage; 
+            //console.dir(product);
+            var image = product.largeImage || product.mediumImage; 
             // adapt view model
             var model = {
               name: product.name,
@@ -97,20 +103,20 @@
               salePrice: product.salePrice ? '$' + product.salePrice : '',
               msrp: product.msrp ? '(Reg $' + product.msrp + ')' : '',
               addToCartUrl: product.addToCartUrl,
-              infoUrl: '?' + JSON.stringify({productId:product.itemId}),
               //thumbStyle: {backgroundImage: 'url("' + (proxy(image) || 'no-image-small.png') + '")'}
               thumbStyle: {backgroundImage: 'url("' + (proxy(image) || '') + '")'}
             };
             model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')';
             model.customerRating = isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1);
-            // TODO(sjmiles): don't remember what this is for
-            var txt = document.createElement("textarea");
-            txt.innerHTML = product.shortDescription || product.longDescription || '';
-            model.shortDescription = txt.textContent.replace(/<(?:.|\n)*?>/gm, '');
+            //model.shortDescription = txt.textContent.replace(/<(?:.|\n)*?>/gm, '');
             // render model
             this.dom.set(model);
-            // special
-            Nano.boolAttribute(this.querySelector('a').parentElement, 'disabled', !product.name);
+            // special rendering
+            Nano.boolAttribute(this.querySelector('a'), 'disabled', !product.name);
+            // TODO(sjmiles): convert entities back to live HTML
+            var txt = document.createElement("textarea");
+            txt.innerHTML = product.longDescription || '';
+            this.querySelector('[longDesc]').innerHTML = txt.textContent;
           }
         },
         buyClick: function(e) {

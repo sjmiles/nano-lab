@@ -1,0 +1,61 @@
+<script>
+  document.registerElement('mart-data', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        /*
+        this.fetchData('taxonomy');
+        this.fetchData('trending');
+        this.fetchData('vod');
+        */
+        this.fetchData('payload');
+        this.fetchOne('trends', 'trending');
+      },
+      fetchData: function(prop) {
+        if (window[prop]) {
+          window.requestAnimationFrame(function() {
+            this.notify(window[prop]);
+          }.bind(this));
+          //this.notify(prop, window[prop]);
+          //this.deferredSet(prop, window[prop]);
+        } else {
+          this.fetch(prop)
+        }
+      },
+      fetch: function(prop) {
+        Nano.create('nano-ajax', {
+          url: 'mart/cache/' + prop + '.json',
+          '@response': function(e) {
+            this.notify(e.detail);
+          }.bind(this)
+        });
+      },
+      notify: function(data) {
+        this._notify('taxonomy', data.categories);
+        this._notify('trending', data.trends);
+        this._notify('vod', data.vod);
+      },
+      _notify: function(prop, value) {
+        this.dispatchEvent(new CustomEvent(prop + '-change', {detail: value}));
+      },
+      /*
+      deferredSet: function(prop, value) {
+        window.requestAnimationFrame(function() {
+          this.notify(prop, value);
+        }.bind(this));
+      },
+      */
+      fetchOne: function(prop, name) {
+        Nano.create('nano-ajax', {
+          url: 'mart/' + prop + '.php',
+          '@response': function(e) {
+            this.notifyOne(name, e.detail);
+          }.bind(this)
+        });
+      },
+      notifyOne: function(prop, value) {
+        this.dispatchEvent(new CustomEvent(prop + '-change', {detail: value}));
+      }
+    }
+  });
+</script>

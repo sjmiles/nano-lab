@@ -12,7 +12,7 @@
       },
       // extract route from url (url?<route>)
       parseLocation: function() {
-        this.route = location.search.slice(1);
+        this.documentRoute = location.search.slice(1);
       },
       // convert SPA clicks to pushState changes
       jackClicks: function(e) {
@@ -22,17 +22,20 @@
         });
         if (a && a.getAttribute('href').indexOf('://') < 0) {
           e.preventDefault();
-          history.pushState(null, '', a.href);
-          this.parseLocation();
+          this.route = a.href;
         }      
       },
       // route state
       set route(route) {
-        this._route = route;
-        this.notifyRoute();
+        history.pushState(null, '', route);
+        this.parseLocation();
       },
       get route() {
         return this._route;
+      },
+      set documentRoute(route) {
+        this._route = route;
+        this.notifyRoute();
       },
       notifyRoute: function() {
         this.dispatchEvent(new CustomEvent('route-change', {detail: this.route}));

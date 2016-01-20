@@ -1,1 +1,2 @@
-Header set Service-Worker-Allowed "/"
+RewriteEngine On
+RewriteRule ^index.html main.php [L]

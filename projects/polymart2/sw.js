@@ -9,28 +9,8 @@ this.addEventListener('install', function(event) {
         return cache.addAll([
           'main.html',
           'imports.html',
-          'mart/cache/payload.json',
           '../../components/polymer/polymer-nano.html', 
-          '../../components/nano-elements/nano-layout.html',
-          '../../components/nano-elements/nano-import.html',
-          '../../components/nano-elements/nano-ripple.html',
-          '../../components/nano-elements/nano-anchor.html',
-          '../../components/nano-elements/nano-carousel.html',
-          '../../components/nano-elements/nano-ajax.html',
-          //'../../components/nano-elements/nano-spinner.html',
-          '../../components/nano-elements/nano-serviceworker.html',
-          '../../components/icons-simple.html',
-          'src/polymart-view.html', 
-          'src/home-view.html', 
-          'src/simple-router.html', 
-          'src/nav-bar.html', 
-          'src/product-view.html', 
-          'src/grid-layout.html',
-          'src/search-view.html', 
-          'src/categories-view.html', 
-          'src/category-view.html', 
-          'src/mart-data.html', 
-          'src/product-detail.html' 
+          'no-image-small.png'
         ]);
       })
     })
@@ -54,8 +34,7 @@ this.addEventListener('fetch', function(event) {
 });
 
 var shouldFetch = function(request) {
-  // if we require the browser to use it's default handling we can 
-  // return 'false' and prevent ServiceWorker from handling the request
+  // at this time we implement no passthrough case
   return true;
 }
 

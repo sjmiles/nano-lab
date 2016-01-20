@@ -8,7 +8,7 @@
   });
   
   window.Nano = {
-    acquire: function(element/*, name, name, name*/) {
+    acquire: function(element/*, name, ...*/) {
       for (var i=1; i<arguments.length; i++) {
         this.property(element, arguments[i]);
       }
@@ -31,6 +31,22 @@
       }
       node[state ? 'setAttribute' : 'removeAttribute'](attr, '');
     },
+    create: function(tag, props) {
+      var elt = document.createElement(tag, props.is);
+      if (props) {
+        for (var n in props) {
+          var v = props[n];
+          if (n[0] === '@') {
+            elt.addEventListener(n.slice(1), v);
+          } else if (n[0] === '$') {
+            elt.setAttribute(n.slice(1), v);
+          } else {
+            elt[n] = v;
+          }
+        }
+      }
+      return elt;
+    }/*,
     fire: function(node, type, detail, options) {
       var event = new CustomEvent(type, {
         bubbles: Boolean(options && options.bubbles),
@@ -52,7 +68,7 @@
           node.addEventListener(n, f);
         }
       });
-    },
+    },*/
     // TODO(sjmiles): should use Annotations
     pool: function(element) {
       var pool = [];

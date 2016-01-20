@@ -46,7 +46,7 @@ var maybeRedirect = function(request) {
     case 'index.html':
       // user always sees `index.html`, but if SW is active 
       // it replaces `index.html` with app-shell
-      request = new Request('index.main.html');
+      request = new Request('main.html');
       break;
   }
   return request;

@@ -25,7 +25,7 @@
     prototype: {
       __proto__: HTMLAnchorElement.prototype,
       createdCallback: function() {
-        this.href = 'javascript:void(0)';
+        this.href = ''; //javascript:void(0)';
         this.addEventListener('mousedown', this.down.bind(this));
         this.addEventListener('click', this.click.bind(this));
       },

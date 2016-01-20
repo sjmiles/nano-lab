@@ -18,8 +18,8 @@
     }
   </style>
   <template>
-    <a grid-cell vertical center layout href="{{href}}">
-      <img width="144" height="144" src="mart/proxy.php?http://i5.walmartimages.com%2Fdfw%2F4ff9c6c9-4542%2Fk2-_cb52ae11-70a5-4a3c-809f-85912da9d059.v1.jpg%3FodnWidth%3D144%26odnHeight%3D144">
+    <a grid-cell vertical center layout href="{{link}}">
+      <img width="144" height="144" src="{{image}}">
       <span>{{name}}</span>
     </a>
   </template>
@@ -54,7 +54,8 @@
             var route = encodeURIComponent('{"category":"' + c.name + '", "categoryId":"' +  c.id + '"}');
             var splinter = document.createDocumentFragment();
             Annotations.stamp('categories-view', splinter).set({
-              href: '?' + route,
+              link: '?' + route,
+              image: 'mart/category-icon.php?' + c.name,
               name: c.name
             });
             frag.appendChild(splinter);

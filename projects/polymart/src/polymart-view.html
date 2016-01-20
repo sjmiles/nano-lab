@@ -26,16 +26,19 @@
     transition: transform 300ms ease-in-out;
   }
 
-  icon[menu] {
-    display: none;
-    display: inline-block;
-  }
-
+/*
   icon {
     display: inline-block;
     width: 24px;
     height: 24px;
     color: white;
+  }
+*/
+
+  icon {
+    display: none;
+    display: inline-block;
+    cursor: pointer;
   }
 
   app-bar {
@@ -101,9 +104,11 @@
   }
   
   sign-up {
+    display: block;
     padding: 16px 0;
     text-align: center;
     border-top: 1px solid #eee;
+    line-height: 150%;
   }
   sign-up input {
     height: 22px;
@@ -137,7 +142,10 @@
 <dom-module id="polymart-view">
 
   <template>
-    <simple-router on-route-change="onRouteChange"></simple-router>
+    <simple-router route="{{route}}" on-route-change="onRouteChange"></simple-router>
+    <mart-data on-taxonomy-change="onTaxonomyChange" 
+               on-trending-change="onTrendingChange"
+               on-vod-change="onVodChange"></mart-data>
     
     <content-view>
       <app-container>
@@ -150,18 +158,24 @@
         </search-bar>
         
         <view-panel home>
-          <home-view categories="{{categories}}"></home-view>
+          <home-view categories="{{categories}}" trends="{{trends}}" vod="{{vod}}"></home-view>
         </view-panel>
+        
         <view-panel category>
           <category-view category="{{category}}" query="{{categoryId}}"></category-view>
         </view-panel>
+        
         <view-panel search>
           <search-view query="{{query}}"></search-view>
         </view-panel>
               
+        <view-panel product>
+          <product-detail productid="{{productId}}"></product-detail>
+        </view-panel>
+        
         <footer-view vertical middle layout>
           <sign-up>
-            <b>Signup and save!</b>
+            <b>Signup and save!</b><br>
             <span form><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
           </sign-up>
 
@@ -176,15 +190,13 @@
       </app-container>
       
       <app-bar horizontal center layout shadow>
-        <icon menu-white tabindex="1" on-click="menuButtonTap"></icon>
+        <icon arrow-back-white tabindex="1" on-click="backButtonTap"></icon>
         <h3 flex>Polymart</h3>
         <icon cart-white tabindex="2" on-click="cartTap"></icon>
       </app-bar>
       
     </content-view>
 
-    <nano-ajax url="mart/taxonomy.php" on-response="onTaxonomyResponse"></nano-ajax>
-    
     <nav-bar sections="{{categories}}"></nav-bar>
     
   </template>
@@ -195,8 +207,17 @@
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
           this.dom = Annotations.stamp('polymart-view', this);
-          this.views = {home: 0, search: 0, category: 0};
+          this.views = {home: 0, search: 0, category: 0, product: 0};
           this.view = 'home';
+        },
+        onTaxonomyChange: function(e) {
+          this.dom.set({categories: e.detail});
+        },
+        onTrendingChange: function(e) {
+          this.dom.set({trends: e.detail});
+        },
+        onVodChange: function(e) {
+          this.dom.set({vod: e.detail});
         },
         set view(view) {
           if (this._view === view) {
@@ -219,6 +240,7 @@
             s.transform = 'translate3d(0, 0, 0)';
             document.body.scrollTop = views[view];
           }
+          this.querySelector('icon[arrow-back-white]').style.visibility = (view === 'home') ? 'hidden' : '';
         },
         searchKey: function(e) {
           if (e.keyCode === 13) {
@@ -226,21 +248,24 @@
             this.dom.set('query', e.target.value);
           }
         },
-        menuButtonTap: function() {
-          this.view = this._view === 'home' ? 'search' : 'home';
-        },
-        onTaxonomyResponse: function(e) {
-          if (e.detail) {
-            this.dom.set({categories: e.detail.categories});
-          }
-        },
         onRouteChange: function(e) {
-          var route = JSON.parse(decodeURIComponent(e.detail));
-          if (route.category) {
-            this.view = 'category';
-            this.dom.set(route);
+          var json = decodeURIComponent(e.detail);
+          if (json) {
+            var route = JSON.parse(json);
+            if (route.category) {
+              this.view = 'category';
+              this.dom.set(route);
+            } 
+            else if (route.productId) {
+              this.view = 'product';
+              this.dom.set(route);
+            }
+            console.log(route);
           }
-          console.log(route);
+        },
+        backButtonTap: function() {
+          this.view = 'home';
+          this.dom.set('route', '.');
         }
       }  
     });

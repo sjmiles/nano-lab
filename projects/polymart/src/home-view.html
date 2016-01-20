@@ -75,9 +75,6 @@
 
     </div>
 
-    <nano-ajax url="mart/trending.php" on-response="onTrendingResponse"></nano-ajax>
-    <nano-ajax url="mart/vod.php" on-response="onVodResponse"></nano-ajax>
-
   </template>
 
   <script>
@@ -91,18 +88,18 @@
         set categories(categories) {
           this.dom.set({categories: categories});
         },
-        onVodResponse: function(e) {
-          this.dom.set({vod: e.detail});
+        set vod(vod) {
+          this.dom.set({vod: vod});
         },
-        onTrendingResponse: function(e) {
+        set trends(trends) {
           var proxy = function(url) {
             return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
           }
           //
           var crsl = this.dom.$('[hero]');
           crsl.textContent = '';
-          if (e.detail) {
-            var items = e.detail.items;
+          if (trends) {
+            var items = trends; //.items;
             for (var i=0; i<5; i++) {
               var pv = document.createElement('product-view');
               crsl.appendChild(document.createElement('div')).appendChild(pv);
@@ -114,10 +111,9 @@
           //
           var pc = this.dom.$('product-carousel');
           pc.textContent = '';
-          if (e.detail) {
-            var items = e.detail.items;
-            for (var i=0; i<20; i++) {
-              var item = items[i + 5];
+          if (trends) {
+            var items = trends; //.items;
+            for (var i=5, item; item=items[i]; i++) {
               var frag = document.createDocumentFragment();
               Annotations.stamp('mini-view', frag).set({
                 price: '$' + (item.salePrice || item.msrp || (item.bestMarketplacePrice && item.bestMarketplacePrice.price)),

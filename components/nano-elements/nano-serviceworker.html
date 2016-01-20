@@ -10,9 +10,9 @@
       register: function(href, scope) {
         if (href && ('serviceWorker' in navigator)) {
           navigator.serviceWorker.register(href, {scope: scope}).then(function(ServiceWorkerRegistration) {
-            console.log('ServiceWorker is Go');
             this.worker = ServiceWorkerRegistration;
-            this.notify('Abe(1) Says', 'ServiceWorker is Go');
+            //console.log('ServiceWorker is Go');
+            //this.notify('Abe(1) Says', 'ServiceWorker is Go');
           }.bind(this));
         }
       },
