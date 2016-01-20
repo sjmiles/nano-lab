@@ -1,0 +1,15 @@
+{
+  "name": "Polymart",
+  "short_name": "Polymart",
+  "start_url": "./?utm_source=web_app_manifest",
+  "display": "standalone",
+  "theme_color": "#007dc6"
+  "icons": [{
+    "src": "apphomescreen-48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }],
+  "related_applications": [{
+    "platform": "web"
+  }]
+}

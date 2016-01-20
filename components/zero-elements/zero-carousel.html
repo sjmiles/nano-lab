@@ -1,0 +1,70 @@
+<style>
+  zero-carousel {
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  zero-carousel > * {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  zero-carousel::after {
+    content: '';
+    position: absolute;
+    top: calc(50% - 25px);
+    right: 4px;
+    width: 50px;
+    height: 50px;
+    opacity: 0.45;
+    background-repeat: no-repeat;
+    background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M10%206L8.59%207.41%2013.17%2012l-4.58%204.59L10%2018l6-6z%22%2F%3E%3C%2Fsvg%3E');
+  }
+</style>
+
+<script>
+  'use strict';
+  document.registerElement('zero-carousel', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.time = 250;
+        this.start();
+      },
+      start: function() {
+        this.count = this.children.length;
+        this.x = 0;
+        this.update();
+      },
+      next: function() {
+        if (!this.blocked) {
+          this.x--;
+          if (this.x <= -this.count) {
+            this.x = 0;
+          } else if (this.x == 1-this.count) {
+            this.x = 1;
+          }
+          this.update();
+        }
+      },
+      update: function() {
+        var x = this.x, time = this.time;
+        var e = this.firstElementChild;
+        while(e) {
+          e.style.visibility = x > 0 ? 'hidden' : '';
+          e.style.transform = 'translate3d(' + x*100 + '%, 0, 0)';
+          e.style.transition = 'transform ' + time + 'ms ease-in-out';
+          if (++x > 1) {
+            x = x - this.count;
+          }
+          e = e.nextElementSibling;
+        }
+        this.blocked = true;
+        setTimeout(function(){this.blocked = false;}.bind(this), time);
+      }
+    }
+  });   
+</script>

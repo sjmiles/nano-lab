@@ -1,0 +1,6 @@
+[
+  "../../../components/zero-elements/service-worker.html",
+  "../../../components/zero-elements/zero-ajax.html",
+  "../../../components/zero-elements/zero-carousel.html",
+  "../../../components/zero-elements/zero-import.html"
+]

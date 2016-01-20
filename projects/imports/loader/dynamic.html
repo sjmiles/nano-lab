@@ -1,0 +1,13 @@
+<script>
+  [
+    '../import-one.php',
+    '../import-two.php'
+  ]
+  .forEach(function(href) {
+    var link = document.createElement('link');
+    link.rel = 'import';
+    link.href = href;
+    document.head.appendChild(link);
+  });
+</script>
+

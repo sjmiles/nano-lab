@@ -1,0 +1,18 @@
+<!doctype html>
+
+<script>
+  var link = document.createElement('link');
+  link.rel = 'import';
+  link.href = 'import-one.php';
+  document.head.appendChild(link);
+  //
+  var link = document.createElement('link');
+  link.rel = 'import';
+  link.href = 'import-two.php';
+  document.head.appendChild(link);
+  //
+  if (document.body) {
+    console.log(document.body.children.length);
+  }
+</script>
+

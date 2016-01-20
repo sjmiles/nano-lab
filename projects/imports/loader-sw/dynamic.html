@@ -1,0 +1,10 @@
+<link rel="import" href="manifest.json">
+<script>
+  JSON.parse(document.currentScript.parentElement.querySelector('link').import.body.textContent).forEach(function(href) {
+    var link = document.createElement('link');
+    link.rel = 'import';
+    link.href = href;
+    document.head.appendChild(link);
+  });
+</script>
+

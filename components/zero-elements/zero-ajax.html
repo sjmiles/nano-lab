@@ -1,0 +1,31 @@
+<script>
+  document.registerElement('zero-ajax', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.xhr = new XMLHttpRequest();
+        this.xhr.addEventListener("load", this.onLoad.bind(this));
+        Nano.property(this, 'url');
+      },
+      onLoad: function(e) {
+        this.dispatchEvent(new CustomEvent('response', {bubbles: false, detail: e.target.response}));
+      },
+      set url(url) {
+        if (url) {
+          this.sendXhr(
+            this.xhr, 
+            this.type || this.getAttribute('type') || 'json', 
+            this.method || this.getAttribute('method') || 'GET', 
+            url
+          );
+        }
+      },
+      sendXhr: function(xhr, type, method, url) {
+        xhr.abort();
+        xhr.responseType = type;
+        xhr.open(method, url);
+        xhr.send();
+      }
+    }
+  });
+</script>
