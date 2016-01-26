@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  
+  <title>FancyInput Demo</title>
+  
+  <link rel="import" href="../fancy-input.html">
+  
+</head>
+<body>
+
+  <p>
+    <fancy-input oninput="onInput(event)"></fancy-input>
+    <br><br>
+    <fancy-input valid value="Shoop Shoop"></fancy-input>
+    <br><br>
+    <fancy-input error value="Ice Ice Baby"></fancy-input>
+  </p>
+  
+  <script>
+    var onInput = function(event) {
+      event.currentTarget.removeAttribute('valid');
+      event.currentTarget.removeAttribute('error');
+      if (event.target.value === 'Yo') {
+        event.currentTarget.setAttribute('valid', '');
+      } else if (event.target.value === 'No') {
+        event.currentTarget.setAttribute('error', '');
+      }
+    }
+  </script>
+  
+</body>
+</html>

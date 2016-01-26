@@ -1,0 +1,43 @@
+<style>
+  order-form {
+  }
+</style>
+
+<dom-module id="order-form">
+  <template>
+    <div vertical layout>
+      <mdl-textfield><input><label>Credit card number</label></mdl-textfield>
+      <div horizontal layout>
+        <mdl-textfield><input><label>MM</label></mdl-textfield>
+        &nbsp;
+        <mdl-textfield><input><label>YY</label></mdl-textfield>
+        &nbsp;
+        <mdl-textfield><input><label>CVC</label></mdl-textfield>
+      </div>
+      <mdl-textfield><input><label>Name</label></mdl-textfield>
+      <mdl-textfield><input><label>Address</label></mdl-textfield>
+      <mdl-textfield><input><label>Address (optional)</label></mdl-textfield>
+      <div horizontal layout>
+        <mdl-textfield><input><label>City</label></mdl-textfield>
+        &nbsp;
+        <mdl-textfield><input><label>State</label></mdl-textfield>
+      </div>
+      <div horizontal layout>
+        <mdl-textfield><input><label>Zip</label></mdl-textfield>
+        &nbsp;
+        <mdl-textfield><input><label>Country</label></mdl-textfield>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  document.registerElement('order-form', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this.dom = Annotations.stamp('order-form', this);
+      }
+    }
+  });
+</script>

@@ -24,8 +24,6 @@
     // we are already ignoring events fired as part of 'createdCallback',
     // if we delay further we will miss 'attachedCallback' also.
     // This conundrum forces us into a two-stage stamping process.
-    //container.textContent = '';
-    //container.appendChild(subtree);
     // marshal controller
     return {
       stamp: function(container, listener) {
@@ -68,6 +66,9 @@
         for (var n in value) {
           s[n] = value[n];
         }
+      } else if (name[0] === '$') {
+        console.log(name, value);
+        node[b.property] = Annotations.translate(value.slice(1));
       } else {
         node[b.property] = value;
       }
@@ -101,7 +102,8 @@
 
   var xlate = function(container, notes) {
     for (var n in notes.xlate) {
-      set(container, notes, '$' + n, Annotations.translate(n));
+      //updateBindings(container, notes, '$' + n, Annotations.translate(n));
+      updateBindings(container, notes, '$' + n, '$' + n);
     }
   };
   

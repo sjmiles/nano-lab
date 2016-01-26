@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><!-- AX_HTML_01 -->
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title>mdl-textfield demo</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    label {
+      font-style: italic;
+    }
+    [narrow] {
+      width: 100px;
+    }
+  </style>
+
+  <link rel="import" href="../mdl-textfield.html">
+  <link rel="import" href="../flex-layout.html">
+
+  <div vertical layout>
+    <mdl-textfield type="number" label="Credit card number"><input pattern="\d\d\d\d-\d\d\d\d-\d\d\d\d-\d\d\d\d|\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d"></mdl-textfield>
+    <div horizontal layout>
+      <mdl-textfield type="number" narrow label="Month"><input pattern="\d\d" validation-message="Must have two digits"></mdl-textfield>
+      &nbsp;
+      <mdl-textfield type="number" narrow label="Year"></mdl-textfield>
+      &nbsp;
+      <mdl-textfield type="number" narrow label="CVC"></mdl-textfield>
+    </div>
+    <mdl-textfield label="Name"></mdl-textfield>
+    <mdl-textfield label="Address"></mdl-textfield>
+    <mdl-textfield label="Address (optional)"></mdl-textfield>
+    <div horizontal layout>
+      <mdl-textfield label="City"></mdl-textfield>
+      &nbsp;
+      <mdl-textfield narrow label="State"></mdl-textfield>
+      &nbsp;
+      <mdl-textfield type="number" label="Zip"></mdl-textfield>
+    </div>
+    <div horizontal layout>
+      <mdl-textfield label="Country"></mdl-textfield>
+    </div>
+  </div>
+  
+</html>

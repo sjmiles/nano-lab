@@ -115,6 +115,7 @@
   sign-up input {
     height: 22px;
     margin: 0 6px;
+    padding: 3px 10px;
   }
   sign-up a {
     background-color: #ffc120 !important;
@@ -155,7 +156,7 @@
         <search-bar vertical middle layout>
           <search-decor horizontal layout>
             <icon search></icon>
-            <input flex xon-blur="searchBlur" on-keypress="searchKey">
+            <input flex placeholder="Search..." xon-blur="searchBlur" on-keypress="searchKey">
           </search-decor>
         </search-bar>
         
@@ -175,10 +176,14 @@
           <product-detail productid="{{productId}}"></product-detail>
         </view-panel>
         
+        <view-panel order>
+          <order-form></order-form>
+        </view-panel>
+        
         <footer-view vertical middle layout>
           <sign-up>
-            <b>Signup and save!</b><br>
-            <span form><input><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
+            <!--<b>Signup and save!</b><br>-->
+            <span form><input placeholder="Signup and save!"><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
           </sign-up>
 
           <div footer-links>
@@ -209,7 +214,7 @@
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
           this.dom = Annotations.stamp('polymart-view', this);
-          this.views = {home: 0, search: 0, category: 0, product: 0};
+          this.views = {home: 0, search: 0, category: 0, product: 0, order: 1};
           this.view = 'home';
         },
         onTaxonomyChange: function(e) {
@@ -268,6 +273,9 @@
         backButtonTap: function() {
           this.view = 'home';
           this.dom.set('route', '.');
+        },
+        cartTap: function() {
+          this.view = 'order';
         }
       }  
     });

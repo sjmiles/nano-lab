@@ -1,0 +1,54 @@
+<style>
+  fancy-input input {
+    box-sizing: border-box;
+    height: 46px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 6px;    
+    /**/
+    margin: 0;
+    /**/
+    background-color: #fff;
+    border-color: #56b537;
+    color: #5d5d5d;
+    border: 2px solid #ccc;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  }
+  fancy-input {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  }
+  fancy-input input:focus {
+    outline: none;
+  }
+  fancy-input[valid] input {
+    background-repeat: no-repeat;
+    background: #ecf4ec  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQBAMAAACW+SCeAAAAA3NCSVQICAjb4U/gAAAAKlBMVEX///9HpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEdHpEeiS/gOAAAADnRSTlMAESIzRFV3iKq7zN3u/7+mKzIAAAAJcEhZcwAACusAAArrAYKLDVoAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAXUlEQVQYlWNgwA0MsYix3g7AFJS5ewFTsPduAabuu7ex6b6CJsIM0t2AJug7keXuHQFUMca9t7TvXkNTyHT27t27E9BtsQYKGqALMq69ex3TQRJ3F2IKMihjEcMEAF4VG7DzQyCHAAAAAElFTkSuQmCC) right center no-repeat;
+  }
+  fancy-input[error] input {
+    background-color: #fbf4f4;
+    border-color: #ed182f;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  }
+</style>
+
+<script>
+  document.registerElement('fancy-input', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+      },
+      attachedCallback: function() {
+        this.input = this.querySelector('input');
+        if (!this.input) {
+          this.input = this.appendChild(document.createElement('input'));
+        }
+        if (this.hasAttribute('value')) {
+          this.input.value = this.getAttribute('value');
+        }
+      }
+    }
+  });
+</script>
