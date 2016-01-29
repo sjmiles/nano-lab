@@ -1,9 +1,11 @@
 <style> 
   home-view {
     display: block;
+    background: white;
   }
   [hero] {
-    height: 240px;
+    height: 232px;
+    background-color: #f5f5f5;
     transition: opacity 200ms ease-in-out;
   }
   product-view {
@@ -16,11 +18,9 @@
   product-carousel {
     height: 116px;
     padding: 10px 0 20px;
-    margin-bottom: 24px;
     font-size: 0.7em;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    background-color: white;
   }
   product-carousel > div {
     width: 96px;
@@ -29,17 +29,23 @@
   product-carousel img {
     width: 100%;
   }
+  [vod] {
+    background: #80bd00;
+    color: white;
+  }
   action-call {
     height: 226px;
     padding: 4px 16px;
+    color: black;
   }
   categories-view {
     padding: 4px;
     color: #007dc6;
   }
   h3 {
-    margin: 8px 16px;
-    font-size: 1.2em;
+    margin: 0;
+    padding: 16px;
+    font-size: 1.1em;
   }
 </style>
 
@@ -61,19 +67,22 @@
       
       <nano-carousel hero style%="{{carouselStyle}}" vertical middle layout></nano-carousel>
 
-      <h3>Other popular items</h3>
+      <section>
+        <h3>Other popular items</h3>
+        <product-carousel horizontal center layout></product-carousel>
+      </section>
 
-      <product-carousel horizontal center layout></product-carousel>
+      <section vod>
+        <h3>Value of the day</h3>
+        <action-call vertical middle layout>
+          <product-view product="{{vod}}"></product-view>
+        </action-call>
+      </section>
 
-      <h3>Value of the day</h3>
-
-      <action-call vertical middle layout>
-        <product-view product="{{vod}}"></product-view>
-      </action-call>
-
-      <h3>Shop by department</h3>
-
-      <categories-view vertical middle layout categories="{{categories}}"></categories-view>
+      <section>
+        <h3>Shop by department</h3>
+        <categories-view vertical middle layout categories="{{categories}}"></categories-view>
+      </section>
 
     </div>
 
