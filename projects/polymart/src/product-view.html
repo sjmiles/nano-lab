@@ -2,16 +2,16 @@
   <style>
     product-view {
       display: block;
+      padding: 16px;
       text-align: left;
       font-size: 0.7em;
       background-color: white;
     }
     product-view [name] {
+      height: 50px;
       font-size: 1.2em;
       font-weight: 600;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     product-view [price] {
       font-size: 1.4em;
@@ -61,11 +61,8 @@
   <template>
     <div horizontal layout>
       <div thumb noflex style%="{{thumbStyle}}"></div>
-      <div flex info style="height: 115px;">
-        <div name style="height: 18px;">{{name}}</div>
-        <div horizontal center layout style="height: 12px;">
-          <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
-        </div>
+      <div flex info>
+        <div name>{{name}}</div>
         <div horizontal center layout style="height: 18px;">
           <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
         </div>
@@ -73,9 +70,11 @@
           <a is="nano-anchor" href="{{infoUrl}}" target="_blank" on-click="infoClick" disabled="{{disabled}}">Info</a>
           <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick" disabled="{{disabled}}">Buy</a>
         </div>
+        <div horizontal center layout style="height: 12px;">
+          <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
+        </div>
       </div>
     </div>
-    <div shortDesc>{{shortDescription}}</div>
   </template>
   <script>
     document.registerElement('product-view', {

@@ -1,83 +1,96 @@
-<style>
-  nano-carousel {
-    display: block;
-    position: relative;
-    overflow: hidden;
-  }
-  nano-carousel > * {
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transition: transform 300ms ease-in-out;
-  }
-  nano-carousel::after {
-    content: '';
-    position: absolute;
-    top: calc(50% - 25px);
-    right: 4px;
-    width: 50px;
-    height: 50px;
-    opacity: 0.45;
-    background-repeat: no-repeat;
-    background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M10%206L8.59%207.41%2013.17%2012l-4.58%204.59L10%2018l6-6z%22%2F%3E%3C%2Fsvg%3E');
-  }
-</style>
+<dom-module id="nano-carousel">
+  <style>
+    .arrow-button {
+      margin: auto 5px;
+      font-size: 50px;
+      color: #999;
+      cursor: pointer;
+    }
+    #prevBtn {
+      left: 5px;
+    }
+    #nextBtn {
+      right: 5px;
+    }
+    #content {
+      position: relative;
+      overflow: hidden;
+    }
+    #content > * {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      animation: 300ms ease-in-out both;
+      will-change: transform;
+    }
+    #content > *:not(:first-child) {
+      transform: translateX(100%);
+    }
+    @keyframes slide-in-left {
+      from { transform: translateX(-100%) }
+      to { transform: translateX(0) }
+    }
+    @keyframes slide-in-right {
+      from { transform: translateX(100%) }
+      to { transform: translateX(0) }
+    }
+    @keyframes slide-out-left {
+      from { transform: translateX(0) }
+      to { transform: translateX(-100%) }
+    }
+    @keyframes slide-out-right {
+      from { transform: translateX(0) }
+      to { transform: translateX(100%) }
+    }
+  </style>
 
-<script>
-  'use strict';
-  document.registerElement('nano-carousel', {
-    prototype: {
-      __proto__: HTMLElement.prototype,
-      createdCallback: function() {
-        this.addEventListener('click', this.click.bind(this));
-      },
-      attachedCallback: function() {
-        //this.start();
-      },
-      start: function() {
-        this.count = this.children.length;
-        this.x = 0;
-        this.update();
-      },
-      click: function() {
-        this.x--;
-        if (this.x <= -this.count) {
+  <template>
+    <div id="prevBtn" class="arrow-button">❮</div>
+    <div id="content" flex></div>
+    <div id="nextBtn" class="arrow-button">❯</div>
+  </template>
+
+  <script>
+    'use strict';
+    document.registerElement('nano-carousel', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
           this.x = 0;
-        } else if (this.x == -this.count+1) {
-          this.x = 1;
-        }
-        this.update();
-        /*
-        if (this.interval) {
-          clearInterval(this.interval);
-          this.interval = null;
-        } else {
-          this.interval = setInterval(function() {
-            this.x++;
-            if (this.x > 0) {
-              this.x = -5;
-            }
-            this.update();
-          }.bind(this), 3000);
-        }
-        */
-      },
-      update: function() {
-        var e = this.firstElementChild;
-        var x = this.x;
-        while (e) {
-          e.style.visibility = x > 0 ? 'hidden' : '';
-          //e.style.opacity = x > 0 ? '0.5' : '';
-          e.style.transform = 'translate3d(' + x*100 + '%, 0, 0)';
-          if (++x > 1) {
-            x = x - this.count;
-          }
-          e = e.nextElementSibling;
+        },
+        attachedCallback: function() {
+          this.dom = Annotations.stamp('nano-carousel', this);
+          this.querySelector('#prevBtn').addEventListener('click', this.prev.bind(this));
+          this.querySelector('#nextBtn').addEventListener('click', this.next.bind(this));
+        },
+        get content() {
+          this._content = this._content || this.querySelector('#content');
+          return this._content;
+        },
+        prev: function() {
+          var c$ = this.content.children;
+          var n = c$.length;
+          var x = this.x;
+          var y = (x-1+n)%n;
+          
+          c$[x].style.animationName = 'slide-out-right';
+          c$[y].style.animationName = 'slide-in-left';
+          this.x = y;
+        },
+        next: function() {
+          var c$ = this.content.children;
+          var n = c$.length;
+          var x = this.x;
+          var y = (x+1+n)%n;
+          
+          c$[x].style.animationName = 'slide-out-left';
+          c$[y].style.animationName = 'slide-in-right';
+          this.x = y;
         }
       }
-    }
-  });   
-</script>
+    });   
+  </script>
+</dom-module>
