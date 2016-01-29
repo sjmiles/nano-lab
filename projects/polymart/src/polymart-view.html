@@ -48,20 +48,17 @@
     top: 0;
     left: 256px;
     right: 0;
-    height: 64px;
-    padding: 0 16px;
-    background-color: #007dc6;
-    color: white;
+    height: 96px;
   }
 
-  app-bar [flex] {
+  app-bar [flex][title] {
     text-align: center;
   }
-
+  
   app-container {
     display: block;
     max-width: 600px;
-    margin: 64px auto 0;
+    margin: 48px auto 0;
     overflow-x: hidden;
   }
 
@@ -84,10 +81,54 @@
     }
   }
   
-  search-bar {
-    padding: 16px;
-    border-bottom: 1px solid #ddd;
+  [top-bar] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 48px;
+    padding: 0 16px;
+    background-color: #007dc6;
+    color: white;
   }
+
+  [top-bar] > icon {
+    padding: 4px;
+  }
+
+  icon[margin] {
+    margin: 0 12px;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  [promotion] {
+    height: 48px;
+    background-color: #f5f5f5;
+    color: #f47421
+  }
+
+  search-bar {
+    padding: 54px 16px 8px;
+    background-color: #007dc6;
+    transition: transform 0.2s;
+  }
+
+  search-bar::after {
+    content: "";
+    position: absolute;
+    top: 41px;
+    right: 69px;
+    border: 7px solid transparent;
+    border-bottom-color: #fff;
+  }
+
+  search-bar.hidden {
+    transform: translate3d(0, -50%, 0);
+  }
+
   search-decor {
     display: block;
     border: 1px solid #ddd;
@@ -98,6 +139,7 @@
   search-decor input {
     margin-left: 8px;
     border: none;
+    font: inherit;
   }
   search-decor input:focus {
     margin-left: 8px;
@@ -128,7 +170,6 @@
   }
   footer-view {
     font-size: 0.8em;
-    margin-top: 16px;
     padding-bottom: 16px;
     background-color: #f2f8fd;
   }
@@ -152,14 +193,9 @@
     
     <content-view>
       <app-container>
-              
-        <search-bar vertical middle layout>
-          <search-decor horizontal layout>
-            <icon search></icon>
-            <input flex placeholder="Search..." xon-blur="searchBlur" on-keypress="searchKey">
-          </search-decor>
-        </search-bar>
-        
+
+        <div promotion horizontal center middle layout>FREE Shipping on $50+ orders</div>
+
         <view-panel home>
           <home-view categories="{{categories}}" trends="{{trends}}" vod="{{vod}}"></home-view>
         </view-panel>
@@ -196,10 +232,23 @@
         
       </app-container>
       
-      <app-bar horizontal center layout shadow>
-        <icon arrow-back-white tabindex="1" on-click="backButtonTap"></icon>
-        <h3 flex>Polymart</h3>
-        <icon cart-white tabindex="2" on-click="cartTap"></icon>
+      <app-bar>
+
+        <search-bar vertical middle layout shadow>
+          <search-decor horizontal layout>
+            <!-- <icon search></icon> -->
+            <input flex type="search" placeholder="Search..." xon-blur="searchBlur" on-keypress="searchKey">
+          </search-decor>
+        </search-bar>
+
+        <div top-bar horizontal center layout>
+          <icon arrow-back-white tabindex="1" on-click="backButtonTap"></icon>
+          <icon margin></icon>
+          <h2 flex title>Polymart</h2>
+          <icon search-white margin tabindex="2" on-click="searchTap"></icon>
+          <icon cart-white tabindex="2" on-click="cartTap"></icon>
+        </div>
+
       </app-bar>
       
     </content-view>
@@ -276,6 +325,9 @@
         },
         cartTap: function() {
           this.view = 'order';
+        },
+        searchTap: function() {
+          this.querySelector('search-bar').classList.toggle('hidden');
         }
       }  
     });
