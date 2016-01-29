@@ -15,7 +15,8 @@ var nano = [
   '../src/annotator.html',
   '../src/annotations.html',
   '../src/dom-module.html',
-  '../nano-lib.html'
+  '../src/nano-lib.html',
+  '../src/nano-bootstrap.html'
 ];
 
 gulp.task('annotations', function() {

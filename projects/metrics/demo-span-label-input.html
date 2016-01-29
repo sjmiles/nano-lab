@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- AX_HTML_01 -->
+<html lang="en">
+  
+<title>demo-span-label-input</title>
+
+<script src="../../polymetrics/perf-lib/perf.js"></script>
+
+<body>
+  
+  <script>
+    console.perf();
+    for (var i=0; i<1000; i++) {
+      var f = document.createElement('input');
+      var l = document.createElement('label');
+      l.textContent = 'Text';
+      l.appendChild(f);
+      var span = document.createElement('span');
+      span.appendChild(l);
+      document.body.appendChild(span);
+    }
+    console.perfEnd();
+  </script>
+
+</body>
+
+</html>

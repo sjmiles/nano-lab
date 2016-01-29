@@ -20,7 +20,7 @@
     
     <app-content>
       <content-column>
-        <content-title><span>{{$You are here}}</span>: <span>{{title}}</span></content-title>
+        <content-title><span>{{$You are here}}</span>: <span>{{$title}}</span></content-title>
         <here-view style="display: none;">
           <some-content content="{{content}}"></some-content>
         </here-view>
@@ -40,27 +40,19 @@
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
-          this.dom = Nano.prepare(document.querySelector('template'));
-          this.dom.stamp(this);
           this.views = document.createElement('nano-views');
           this.views.baseUrl = 'src/views/';
+          this.dom = Nano.prepare(document.querySelector('template'));
+          // remember that the act of stamping causes components to come to life
+          // and they may send events right away
+          this.dom.stamp(this);
         },
         onContentChange: function(e) {
           this.dom.set('content', e.detail || '(no content)');
         },
         onRouteChange: function(e) {
-          var route = e.detail;
-          switch(route) {
-            case 'Here':
-            case 'There':
-            case 'Anywhere':
-            case 'Nowhere':
-              break;
-            default:
-              route = 'Here';
-              break;
-          }
-          this.dom.set('title', Nano.translate(e.detail || 'Here'));
+          var route = e.detail || 'Here';
+          this.dom.set('$title', route);
           this.view = route.toLowerCase() + '-view';
         },
         set view(view) {

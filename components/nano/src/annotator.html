@@ -9,7 +9,7 @@
     annotate: function(node) {
       var root = Object.create(null);
       root.luid = 0;
-      root.nodes = [];
+      root.locators = [];
       this.annotateSubtree(node, {}, root);
       return root;
     },
@@ -38,12 +38,12 @@
       if (!luid) {
         luid = node._luid = ++root.luid;
       }
-      root.nodes[luid] = locator;
+      root.locators[luid] = locator;
       return luid;
     },
     
     findInstanceNode: function(root, uid, container) {
-      return this._findInstanceNode(root.nodes[uid], container);
+      return this._findInstanceNode(root.locators[uid], container);
     },
     
     _findInstanceNode: function(locator, container) {

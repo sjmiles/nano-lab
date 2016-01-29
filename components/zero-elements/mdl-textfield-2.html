@@ -9,21 +9,6 @@
     margin: 0;
     padding: 20px 0;
   }
-  mdl-textfield .mdl-button {
-    position: absolute;
-    bottom: 20px;
-  }
-  mdl-textfield[align-right] {
-    text-align: right;
-  }
-  mdl-textfield[full-width] {
-    width: 100%;
-  }
-  mdl-textfield[expandable] {
-    min-width: 32px;
-    width: auto;
-    min-height: 32px;
-  }
   mdl-textfield input {
     border: none;
     border-bottom: 1px solid rgba(0,0,0, 0.12);
@@ -69,14 +54,14 @@
   mdl-textfield.is-dirty label {
     visibility: hidden;
   }
+  mdl-textfield.is-disabled label {
+    color: rgba(0,0,0, 0.26);
+  }
   mdl-textfield[floating-label] label {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
     -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  mdl-textfield.is-disabled label {
-    color: rgba(0,0,0, 0.26);
   }
   mdl-textfield[floating-label].is-focused label,
   mdl-textfield[floating-label].is-dirty label {
@@ -89,7 +74,7 @@
     color: rgb(222, 50, 38);
     font-size: 12px;
   }
-  label:after {
+  mdl-textfield label:after {
     background-color: rgb(63,81,181);
     bottom: 20px;
     content: '';
@@ -111,7 +96,7 @@
   mdl-textfield.is-invalid label:after {
     background-color: rgb(222, 50, 38);
   }
-  .mdl-textfield__error {
+  mdl-textfield [error] {
     color: rgb(222, 50, 38);
     position: absolute;
     font-size: 12px;
@@ -122,65 +107,61 @@
   mdl-textfield.is-invalid [error] {
     visibility: visible;
   }
-  /**/
-  mdl-textfield[floating-label].is-focused .mdl-textfield__expandable-holder label,
-  mdl-textfield[floating-label].is-dirty .mdl-textfield__expandable-holder label {
-    top: -16px;
-  }
-  .mdl-textfield__expandable-holder {
-    display: inline-block;
-    position: relative;
-    margin-left: 32px;
-    -webkit-transition-duration: 0.2s;
-    transition-duration: 0.2s;
-    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-block;
-    max-width: 0.1px;
-  }
-  mdl-textfield.is-focused .mdl-textfield__expandable-holder, mdl-textfield.is-dirty .mdl-textfield__expandable-holder {
-    max-width: 600px;
-  }
-  .mdl-textfield__expandable-holder label:after {
-    bottom: 0;
-  }
 </style>
 
 <script>
   'use strict';
 
+  var guid = 1000;
+  
   document.registerElement('mdl-textfield', {
     prototype: {
       __proto__: HTMLElement.prototype,
       attachedCallback: function() {
-        /**
-         * Class constructor for Textfield MDL component.
-         * Implements MDL component design pattern defined at:
-         * https://github.com/jasonmayes/mdl-component-design-pattern
-         *
-         * @constructor
-         * @param {HTMLElement} element The element that will be upgraded.
-         */
         this.setAttribute('floating-label', '');
-        this.maxRows = -1;
-        this.init();
+        this.init_();
       },
       /**
-       * Store strings for class names defined by this component that are used in
-       * JavaScript. This allows us to simply change it in one place should we
-       * decide to modify at a later date.
-       *
-       * @enum {string}
-       * @private
+       * Initialize element.
        */
-      CssClasses_: {
-        IS_DIRTY: 'is-dirty',
-        IS_FOCUSED: 'is-focused',
-        IS_DISABLED: 'is-disabled',
-        IS_INVALID: 'is-invalid',
-        IS_UPGRADED: 'is-upgraded'
+      init_: function() {
+        this.input_ = this.querySelector('input');
+        if (!this.input_) {
+          this.input_ = this.appendChild(document.createElement('input'));
+          this.input_.type = this.getAttribute('type') || 'text';
+        }
+        this.input_.id = 'gid' + guid++;
+        this.initInput_(this.input_)
+        //
+        this.label_ = this.querySelector('label');
+        if (!this.label_) {
+          this.label_ = this.appendChild(document.createElement('label'));
+          this.label_.textContent = this.getAttribute('label');
+        }
+        this.label_.setAttribute('for', this.input_.id);
       },
-
+      initInput_: function(i) {
+        //var cl = this.classList;
+        var self = this;
+        var listen = function(event, method) {
+          i.addEventListener(event, function(e) { self[method](e); });
+        };
+        listen('input', 'updateClasses');
+        listen('focus', 'onFocus_');
+        listen('blur', 'onBlur_');
+        /*
+        var invalid = cl.contains('is-invalid') || this.hasAttribute('invalid');
+        this.updateClasses_();
+        if (invalid) {
+          cl.add('is-invalid');
+        }
+        if (i.hasAttribute('autofocus')) {
+          this.focus();
+          this.updateClasses_();
+        }
+        */
+      },
+      
       /**
        * Handle input being entered.
        *
@@ -202,7 +183,7 @@
        * @private
        */
       onFocus_: function(event) {
-        this.classList.add(this.CssClasses_.IS_FOCUSED);
+        this.classList.add('is-focused');
       },
       /**
        * Handle blur.
@@ -211,16 +192,7 @@
        * @private
        */
       onBlur_: function(event) {
-        this.classList.remove(this.CssClasses_.IS_FOCUSED);
-      },
-      /**
-       * Handle reset event from out side.
-       *
-       * @param {Event} event The event that fired.
-       * @private
-       */
-      onReset_: function(event) {
-        this.updateClasses_();
+        this.classList.remove('is-focused');
       },
       /**
        * Handle class updates.
@@ -228,11 +200,11 @@
        * @private
        */
       updateClasses_: function() {
-        var cl = this.classList, cc = this.CssClasses_, i = this.input_;
-        cl.toggle(cc.IS_DISABLED, i.disabled);
-        cl.toggle(cc.IS_FOCUSED, this.querySelector(':focus'));
-        cl.toggle(cc.IS_INVALID, i.validity && !i.validity.valid);
-        cl.toggle(cc.IS_DIRTY, i.value && i.value.length > 0);
+        var cl = this.classList, i = this.input_;
+        cl.toggle('is-disabled', i.disabled);
+        cl.toggle('is-focused', this.querySelector(':focus'));
+        cl.toggle('is-invalid', i.validity && !i.validity.valid);
+        cl.toggle('is-dirty', i.value && i.value.length > 0);
       },
 
       // Public methods.
@@ -272,53 +244,6 @@
       change: function(value) {
         this.input_.value = value || '';
         this.updateClasses_();
-      },
-     /**
-       * Initialize element.
-       */
-      init: function() {
-        this.input_ = this.querySelector('input');
-        if (!this.input_) {
-          this.input_ = this.appendChild(document.createElement('input'));
-          this.input_.type = this.getAttribute('type') || 'text';
-        }
-        this.input_.id = 'gid' + Math.floor(Math.random()*1e4+1e4);
-        this.initInput_(this.input_)
-        //
-        this.label_ = this.querySelector('label');
-        if (!this.label_) {
-          this.label_ = this.appendChild(document.createElement('label'));
-          this.label_.textContent = this.getAttribute('label');
-        }
-        this.label_.setAttribute('for', this.input_.id);
-      },
-      initInput_: function(i) {
-        var cl = this.classList;
-        if (i.hasAttribute('maxrows')) {
-          this.maxRows = parseInt(i.getAttribute('maxrows'), 10);
-          if (isNaN(this.maxRows)) {
-            this.maxRows = -1;
-          }
-        }
-        i.addEventListener('input', this.updateClasses_.bind(this));
-        i.addEventListener('focus', this.onFocus_.bind(this));
-        i.addEventListener('blur', this.onBlur_.bind(this));
-        i.addEventListener('reset', this.onReset_.bind(this));
-        if (this.maxRows !== -1) {
-          // TODO: This should handle pasting multi line text.
-          // Currently doesn't.
-          i.addEventListener('keydown', this.onKeyDown_.bind(this));
-        }
-        var invalid = cl.contains(this.CssClasses_.IS_INVALID) || this.hasAttribute('invalid');
-        this.updateClasses_();
-        //cl.add(this.CssClasses_.IS_UPGRADED);
-        if (invalid) {
-          cl.add(this.CssClasses_.IS_INVALID);
-        }
-        if (i.hasAttribute('autofocus')) {
-          this.focus();
-          this.updateClasses_();
-        }
       }
     }
   });

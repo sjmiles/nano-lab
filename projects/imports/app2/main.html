@@ -1,0 +1,28 @@
+<!doctype html>
+
+<link rel="import" href="imports.html">
+
+<link rel="import" href="thing-two.html">
+
+<service-worker href="sw.js"></service-worker>
+
+<style>
+  zero-carousel {
+    width: 228px;
+    height: 228px;
+    border: 3px solid lightblue;
+  }
+  zero-carousel div {
+    border: 3px solid orange;
+    padding: 32px;
+    box-sizing: border-box;
+  }
+</style>
+
+<zero-carousel onclick="this.next()">
+  <div>One</div>
+  <div>Two</div>
+  <div>Three</div>
+  <div>Four</div>
+  <div>Five</div>
+</zero-carousel>

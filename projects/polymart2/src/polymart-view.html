@@ -1,11 +1,212 @@
-<script>
-  document.registerElement('polymart-view', {
-    prototype: {
-      __proto__: HTMLElement.prototype,
-      createdCallback: function() {
-        this.innerHTML = '<img src="no-image-small.png">';
-      }
+<style>
+  
+  polymart-view {
+    display: block;
+    background-color: #f5f5f5;
+  }
+
+  nav-bar {
+    white-space: pre;
+    background-color: #007dc6;
+    color: whitesmoke;
+    position: fixed;
+    top: 0;
+    width: 256px;
+    bottom: 0px;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  content-view {
+    display: block;
+    padding-left: 256px;
+  }
+  view-panel {
+    display: none;
+    transition: transform 300ms ease-in-out;
+  }
+
+  icon {
+    cursor: pointer;
+  }
+
+  app-bar {
+    display: block;
+    position: fixed !important;
+    top: 0;
+    left: 256px;
+    right: 0;
+    height: 64px;
+    padding: 0 16px;
+    background-color: #007dc6;
+    color: white;
+  }
+
+  app-bar [flex] {
+    text-align: center;
+  }
+
+  app-container {
+    display: block;
+    max-width: 600px;
+    margin: 64px auto 0;
+    overflow-x: hidden;
+  }
+
+  /* narrow mode */
+  @media (max-width: 512px) {
+    nav-bar {
+      left: -256px;
     }
-  });
-</script>                          
-                          
+    nav-bar[open] {
+      left: 0px;
+    }
+    app-bar {
+      left: 0px;
+    }
+    content-view {
+      padding-left: 0px;
+    }
+    icon[menu] {
+      display: inline-block;
+    }
+  }
+  
+  search-bar {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+  }
+  search-decor {
+    display: block;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 4px 8px;
+    background-color: white;
+  }
+  search-decor input {
+    margin-left: 8px;
+    border: none;
+  }
+  search-decor input:focus {
+    margin-left: 8px;
+    border: none;
+    outline: none;
+  }
+  
+  sign-up {
+    display: block;
+    padding: 16px 0;
+    text-align: center;
+    border-top: 1px solid #eee;
+    line-height: 150%;
+  }
+  sign-up input {
+    height: 22px;
+    margin: 0 6px;
+    padding: 3px 10px;
+  }
+  sign-up a {
+    background-color: #ffc120 !important;
+    padding: 6px 12px !important;
+    border-radius: 2px;
+  }
+  sign-up [form] {
+    padding: 4px;
+    white-space: nowrap;
+  }
+  footer-view {
+    font-size: 0.8em;
+    margin-top: 16px;
+    padding-bottom: 16px;
+    background-color: #f2f8fd;
+  }
+  footer-view [footer-links] {
+    text-align: center;
+  }
+  footer-view [footer-links] a {
+    white-space: nowrap;
+    padding: 8px 14px !important;
+    color: #007dc6 !important;
+  }
+</style>
+
+<dom-module id="polymart-view">
+
+  <template>
+    <simple-router route="{{route}}" on-route-change="onRouteChange"></simple-router>
+    <mart-data on-taxonomy-change="onTaxonomyChange" 
+               on-trending-change="onTrendingChange"
+               on-vod-change="onVodChange"></mart-data>
+    
+    <content-view>
+      <app-container>
+              
+        <search-bar vertical middle layout>
+          <search-decor horizontal layout>
+            <icon search></icon>
+            <input flex placeholder="Search..." xon-blur="searchBlur" on-keypress="searchKey">
+          </search-decor>
+        </search-bar>
+        
+        <view-panel home>
+          <home-view categories="{{categories}}" trends="{{trends}}" vod="{{vod}}"></home-view>
+        </view-panel>
+        
+        <view-panel category>
+          <category-view category="{{category}}" query="{{categoryId}}"></category-view>
+        </view-panel>
+        
+        <view-panel search>
+          <search-view query="{{query}}"></search-view>
+        </view-panel>
+              
+        <view-panel product>
+          <product-detail productid="{{productId}}"></product-detail>
+        </view-panel>
+        
+        <view-panel order>
+          <order-form></order-form>
+        </view-panel>
+        
+        <footer-view vertical middle layout>
+          <sign-up>
+            <!--<b>Signup and save!</b><br>-->
+            <span form><input placeholder="Signup and save!"><a is="nano-anchor" title="(or be punished)">Submit!</a></span>
+          </sign-up>
+
+          <div footer-links>
+            <a is="nano-anchor">Help</a>
+            <a is="nano-anchor">Feedback</a>
+            <a is="nano-anchor">Terms of Use</a>
+            <a is="nano-anchor">Privacy and Security</a>
+          </div>
+        </footer-view>
+        
+      </app-container>
+      
+      <app-bar horizontal center layout shadow>
+        <icon arrow-back-white tabindex="1" on-click="backButtonTap"></icon>
+        <h3 flex>Polymart</h3>
+        <icon cart-white tabindex="2" on-click="cartTap"></icon>
+      </app-bar>
+      
+    </content-view>
+
+    <nav-bar sections="{{categories}}"></nav-bar>
+    
+  </template>
+
+  <script>
+    document.registerElement('polymart-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this.dom = Nano.prepare('polymart-view');
+          this.dom.stamp(this);
+        }
+      }  
+    });
+  </script>
+  
+</dom-module>

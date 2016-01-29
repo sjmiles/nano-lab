@@ -1,0 +1,11 @@
+{
+  "name": "Polymart",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#007dc6",
+  "icons": [{
+    "src": "meta/homescreen-256.png",
+    "sizes": "256x256",
+    "type": "image/png"
+  }]
+}

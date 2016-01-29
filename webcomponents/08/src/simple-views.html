@@ -1,0 +1,26 @@
+<script>
+  'use strict';
+  document.registerElement('simple-views', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        this._views = Object.create(null);
+        this.baseUrl = this.baseUrl || '';
+      },
+      select: function(name, element, container) {
+        if (!this._views[name]) {
+          Nano.import(this.baseUrl + name + '.html')
+          if (!element) {
+            element = container.appendChild(document.createElement(name));
+          }
+          this._views[name] = element;
+        }
+        for (var n in this._views) {
+          var view = this._views[n];
+          view.active = (name === n);
+          view.style.display = view.active ? '' : 'none';
+        }
+      }
+    }
+  });   
+</script>

@@ -38,6 +38,7 @@
         // is to capture a 'root offset' to locate the inserted subtree.
         container.textContent = '';
         container.appendChild(subtree);
+        return this;
       }
     };
   };
@@ -59,6 +60,8 @@
   var updateBindings = function(container, notes, name, value) {
     if (value === null || value === undefined) {
       value = '';
+    } else if (name[0] === '$') {
+      value = Annotations.translate(value);
     }
     doForBindings(container, notes, notes.mustaches, name, function(b, node) {
       if (b.property === 'style%') {
@@ -66,9 +69,6 @@
         for (var n in value) {
           s[n] = value[n];
         }
-      } else if (name[0] === '$') {
-        console.log(name, value);
-        node[b.property] = Annotations.translate(value.slice(1));
       } else {
         node[b.property] = value;
       }
@@ -102,8 +102,7 @@
 
   var xlate = function(container, notes) {
     for (var n in notes.xlate) {
-      //updateBindings(container, notes, '$' + n, Annotations.translate(n));
-      updateBindings(container, notes, '$' + n, '$' + n);
+      updateBindings(container, notes, n, n.slice(1));
     }
   };
   
@@ -156,7 +155,7 @@
       var p = value.slice(2, -2);
       takeNote(root, 'mustaches', p, {property: property, uid: annotator.getUid(node, locator, root)});
       if (p[0] === '$') {
-        takeNote(root, 'xlate', p.slice(1), true);
+        takeNote(root, 'xlate', p, true);
       }
       return true;
     }

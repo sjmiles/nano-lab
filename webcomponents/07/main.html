@@ -20,7 +20,7 @@
     
     <app-content>
       <content-column>
-        <content-title><span>{{$You are here}}</span>: <span>{{title}}</span></content-title>
+        <content-title><span>{{$You are here}}</span>: <span>{{$title}}</span></content-title>
         <some-content content="{{content}}"></some-content>
       </content-column>
     </app-content>
@@ -39,7 +39,7 @@
           this.dom.stamp(this);
         },
         onRouteChange: function(e) {
-          this.dom.set('title', Annotations.translate(e.detail || 'Here'));
+          this.dom.set('$title', e.detail || 'Here');
         },
         onContentChange: function(e) {
           this.dom.set('content', e.detail || '(no content)');

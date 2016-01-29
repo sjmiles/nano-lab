@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- AX_HTML_01 -->
+<html lang="en">
+  
+<title>demo-mdl-textfield</title>
+
+<script src="../../polymetrics/perf-lib/perf.js"></script>
+
+<link rel="import" href="../../components/zero-elements/mdl-textfield.html">
+
+<body>
+  
+  <script>
+    console.perf();
+    for (var i=0; i<1000; i++) {
+      var tx = document.createElement('mdl-textfield');
+      tx.setAttribute('label', 'Text');
+      document.body.appendChild(tx);
+    }
+    console.perfEnd();
+  </script>
+
+</body>
+
+</html>

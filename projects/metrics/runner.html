@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+
+  <link rel="import" href="../../polymetrics/perf-lib/frame-tester.html">
+
+  <style>
+    summary {
+      font-family: sans-serif;
+      font-size: 1.5em;
+    }
+  </style>
+
+</head>
+<body>
+  
+  <summary>This tests some input variants.</summary>
+  
+  <frame-tester></frame-tester>
+
+  <script>
+    document.querySelector('frame-tester').tests = [
+      'demo-input.html',
+      'demo-span-label-input.html',
+      'demo-mdl-textfield.html',
+      'demo-mdl-textfield-2.html'
+    ];
+  </script>
+
+</body>
+</html>

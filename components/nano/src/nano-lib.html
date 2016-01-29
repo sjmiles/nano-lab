@@ -46,29 +46,7 @@
         }
       }
       return elt;
-    }/*,
-    fire: function(node, type, detail, options) {
-      var event = new CustomEvent(type, {
-        bubbles: Boolean(options && options.bubbles),
-        cancelable: Boolean(options && options.cancelable),
-        detail: (detail === null || detail === undefined) ? {} : detail
-      });
-      node.dispatchEvent(event);
-      return event;
     },
-    listen: function(node, events, context) {
-      events.forEach(function(n) {
-        var fn = 'on' + n[0].toUpperCase() + n.slice(1);
-        var f = context[fn];
-        if (!f) {
-          console.warn('Nano.listen: method [%s] not found on [%s]', fn, node.localName);
-        } else {
-          f = f.bind(context);
-          // `cache[n]=f` to implement `unlisten`
-          node.addEventListener(n, f);
-        }
-      });
-    },*/
     // TODO(sjmiles): should use Annotations
     pool: function(element) {
       var pool = [];

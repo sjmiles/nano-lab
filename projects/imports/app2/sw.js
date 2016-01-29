@@ -1,28 +1,23 @@
 this.addEventListener('install', function(event) {
   event.waitUntil(
-    // TODO(sjmiles): flush the cache when a new worker is installed, 
-    // mostly for easier testing
-    caches.delete('v1').then(function() {
-      caches.open('v1').then(function(cache) {
-        // TODO(sjmiles): seed the cache with modules required for offline 
-        // that may not be fetched by online app (due to bundling or laziness)
-        return cache.addAll([
-          'main.html',
-          'imports.html',
-          '../../components/polymer/polymer-nano.html', 
-          'no-image-small.png'
-        ]);
+    fetch(new Request('manifest.json')).then(function(response) {
+      response.json().then(function(modules) {
+        // TODO(sjmiles): flush the cache when a new worker is installed, 
+        // mostly for easier testing
+        caches.delete('v1').then(function() {
+          console.log('deleted v1 cache');
+          caches.open('v1').then(function(cache) {
+            // TODO(sjmiles): seed the cache with modules required for offline 
+            // that may not be fetched by online app (due to bundling or laziness)
+            console.log('seeding v1 cache', modules);
+            modules.push('main.html');
+            return cache.addAll(modules);
+          })
+        })
       })
     })
   );
 });
-
-/*
-false && this.addEventListener('online', function(event) {
-  console.log('received online event');
-  this.registration.showNotification('Online', {body: 'Online Achieved', tag: 'abe-says'});
-});
-*/
 
 // serviceworker's hook into network operations
 this.addEventListener('fetch', function(event) {
@@ -34,7 +29,8 @@ this.addEventListener('fetch', function(event) {
 });
 
 var shouldFetch = function(request) {
-  // at this time we implement no passthrough case
+  // if we require the browser to use it's default handling we can 
+  // return 'false' and prevent ServiceWorker from handling the request
   return true;
 }
 
@@ -58,7 +54,7 @@ var smartFetch = function(request) {
   // TODO(sjmiles): does this need to be smarter to save bandwidth? 
   // I believe it's true that the browser cache is between this fetch
   // request and the actual network, so we can use standard cache
-  // control as a partial throttle. 
+  // control as a throttle. 
   var fetchedResponse = cachedFetch(request);
   // return a cached response, or at least the fetch promise
   return caches.match(request).then(function(response) {
@@ -79,20 +75,6 @@ var maybeCache = function(request, response) {
   // TODO(sjmiles): be aggressive, be be aggressive
   // TODO(sjmiles): should be smarter to save cache space
   cache(request, response);
-  /*
-  var url = new URL(request.url);
-  var module = url.pathname.split('/').pop();
-  switch (module) {
-    case 'imports.html':
-    case 'index.css.html':
-    case 'index.main.html':
-    case 'service-worker.html':
-    case 'nav-bar.html':
-    case 'some-content.html':
-      cache(request, response);
-      break;
-  }
-  */
 };
 
 var cache = function(request, response) {

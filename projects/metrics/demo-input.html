@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- AX_HTML_01 -->
+<html lang="en">
+  
+<title>demo-input</title>
+
+<script src="../../polymetrics/perf-lib/perf.js"></script>
+
+<body>
+  
+  <script>
+    console.perf();
+    for (var i=0; i<1000; i++) {
+      var f = document.createElement('input');
+      f.placeholder = 'Text';
+      document.body.appendChild(f);
+    }
+    console.perfEnd();
+  </script>
+
+</body>
+
+</html>

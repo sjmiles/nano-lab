@@ -10,7 +10,7 @@ this.addEventListener('install', function(event) {
             // TODO(sjmiles): seed the cache with modules required for offline 
             // that may not be fetched by online app (due to bundling or laziness)
             console.log('seeding v1 cache', modules);
-            cache.add('main.html');
+            modules.push('main.html');
             return cache.addAll(modules);
           })
         })

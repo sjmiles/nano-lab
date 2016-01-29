@@ -13,6 +13,11 @@
     label {
       font-style: italic;
     }
+    form {
+      width: 620px;
+      padding: 16px;
+      border: 1px solid whitesmoke;
+    }
     [narrow] {
       width: 100px;
     }
@@ -21,8 +26,39 @@
   <link rel="import" href="../mdl-textfield.html">
   <link rel="import" href="../flex-layout.html">
 
-  <div vertical layout>
-    <mdl-textfield type="number" label="Credit card number"><input pattern="\d\d\d\d-\d\d\d\d-\d\d\d\d-\d\d\d\d|\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d"></mdl-textfield>
+  <form vertical stretch layout>
+    
+    <mdl-textfield label="Name on card">
+      <input name="ccname" required autocomplete="cc-name">
+    </mdl-textfield>
+
+    <mdl-textfield label="Card Number">
+      <input name="cardnumber" Xtype="number" required autocomplete="cc-number" pattern="\d{4}-\d{4}-\d{4}-\d{4}|\d{16}">
+    </mdl-textfield>
+
+    <mdl-textfield label="Card Number">
+      <input name="cardnumber" type="number" required autocomplete="cc-number" pattern="\d{16}">
+    </mdl-textfield>
+
+    <div horizontal layout>
+      
+      <mdl-textfield flex label="Expiry (mm/yyyy)">
+        <input name="cc-exp" required Xplaceholder="MM/YYYY" autocomplete="cc-exp" pattern="\d{2}-\d{4}|\d\d\/\d{4}|\d\d\/\d\d">
+      </mdl-textfield>
+      
+      &nbsp;&nbsp;
+      
+      <mdl-textfield flex label="CVC (###)">
+        <input name="cvc" type="number" required autocomplete="cc-csc" pattern="\d\d\d">
+      </mdl-textfield>
+      
+      <span flex></span>
+      
+    </div>
+    
+    <hr>
+<!--    
+    <mdl-textfield type="number" label="Credit card number"><input name="cardnumber" required autocomplete="cc-number" pattern="\d{4}-\d{4}-\d{4}-\d{4}|\d{4}\d{4}\d{4}\d{4}"></mdl-textfield>
     <div horizontal layout>
       <mdl-textfield type="number" narrow label="Month"><input pattern="\d\d" validation-message="Must have two digits"></mdl-textfield>
       &nbsp;
@@ -43,6 +79,10 @@
     <div horizontal layout>
       <mdl-textfield label="Country"></mdl-textfield>
     </div>
-  </div>
+-->
+    <div>
+      <button submit>Submit</button>
+    </div>
+  </form>
   
 </html>
