@@ -1,16 +1,22 @@
 <dom-module id="nano-carousel">
   <style>
     .arrow-button {
-      margin: auto 5px;
-      font-size: 50px;
+      margin: auto;
+      padding: 9px;
+      font-size: 36px;
       color: #999;
       cursor: pointer;
+      border: 1px solid #DDD;
     }
     #prevBtn {
-      left: 5px;
+      border-left: none;
+      border-radius: 0 3px 3px 0;
     }
     #nextBtn {
-      right: 5px;
+      border-right: none;
+      border-radius: 3px 0 0 3px;
+      /* HACK(keanulee): Need margin-left to show border due to (potentially) flexbox issue. */
+      margin-left: 1px;
     }
     #content {
       position: relative;
