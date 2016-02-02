@@ -213,6 +213,10 @@
         <view-panel product>
           <product-detail productid="{{productId}}"></product-detail>
         </view-panel>
+
+        <view-panel cart>
+          <cart-view cart="{{cart}}"></cart-view>
+        </view-panel>
         
         <view-panel order>
           <order-form></order-form>
@@ -248,7 +252,9 @@
           <icon margin></icon>
           <h2 flex title>Polymart</h2>
           <icon search-white margin tabindex="2" on-click="searchTap"></icon>
-          <icon cart-white tabindex="2" on-click="cartTap"></icon>
+          <a href='?"cart"' tabindex="3">
+            <icon cart-white></icon>
+          </a>
         </div>
 
       </app-bar>
@@ -264,8 +270,10 @@
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
+          this.addEventListener('add-cart-item', this.addCartItem.bind(this));
+          this.addEventListener('edit-cart-item', this.editCartItem.bind(this));
           this.dom = Annotations.stamp('polymart-view', this);
-          this.views = {home: 0, search: 0, category: 0, product: 0, order: 1};
+          this.views = {home: 0, search: 0, category: 0, product: 0, order: 1, cart: 0};
           this.view = 'home';
         },
         onTaxonomyChange: function(e) {
@@ -300,6 +308,19 @@
           }
           this.querySelector('icon[arrow-back-white]').style.visibility = (view === 'home') ? 'hidden' : '';
         },
+        get cart() {
+          if (this._cart) {
+            return this._cart;
+          }
+
+          var savedCart = localStorage.getItem('cart');
+          this._cart = savedCart ? JSON.parse(savedCart) : {};
+          return this._cart;
+        },
+        set cart(cart) {
+          this._cart = cart;
+          localStorage.setItem('cart', JSON.stringify(this._cart));
+        },
         searchKey: function(e) {
           if (e.keyCode === 13) {
             this.view = 'search';
@@ -313,20 +334,45 @@
             if (route.category) {
               this.view = 'category';
               this.dom.set(route);
-            } 
-            else if (route.productId) {
+            } else if (route.productId) {
               this.view = 'product';
               this.dom.set(route);
+            } else if (route == 'cart') {
+              this.view = 'cart';
+              // NOTE(keanulee): Cannot dom.set until cart-view is created - must do some sort of async on initial load :(
+              if (this.querySelector('cart-view').isCreated) {
+                this.dom.set({cart: this.cart});
+              } else {
+                window.setTimeout(function() {
+                  this.dom.set({cart: this.cart});
+                }.bind(this), 0);
+              }
+            } else if (route == 'order') {
+              this.view = 'order';
             }
-            console.log(route);
+            console.log('onRouteChange', route);
           }
         },
         backButtonTap: function() {
           this.view = 'home';
           this.dom.set('route', '.');
         },
-        cartTap: function() {
-          this.view = 'order';
+        addCartItem: function(event) {
+          var cart = this.cart;
+          var detail = event.detail;
+          cart[detail.productId] = cart[detail.productId] || 0;
+          cart[detail.productId] += detail.quantity;
+          this.cart = cart;
+        },
+        editCartItem: function(event) {
+          var cart = this.cart;
+          var detail = event.detail;
+          if (detail.quantity == 0) {
+            delete cart[detail.productId];
+          } else {
+            cart[detail.productId] = detail.quantity;
+          }
+          this.cart = cart;
         },
         searchTap: function() {
           this.querySelector('search-bar').classList.toggle('hidden');

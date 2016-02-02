@@ -1,0 +1,151 @@
+<dom-module id="cart-item-view">
+  <style>
+    cart-item-view {
+      display: block;
+      padding: 16px;
+      text-align: left;
+      font-size: 0.7em;
+    }
+    cart-item-view [name] {
+      height: 46px;
+      font-size: 1.2em;
+      font-weight: 600;
+      overflow: hidden;
+    }
+    cart-item-view [price] {
+      height: 24px;
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #007dc6;
+    }
+    cart-item-view [rating] {
+      margin-right: 5px;
+    }
+    cart-item-view [numReviews] {
+      color: #888;
+    }
+    cart-item-view select {
+      margin: 6px;
+    }
+    cart-item-view a {
+      background-color: #f47421 !important;
+      margin: 2px 0;
+      padding: 6px 18px !important;
+      border-radius: 2px;
+      font-size: 1.2em !important;
+    }
+    cart-item-view div[disabled] a {
+      background-color: whitesmoke !important;
+      color: silver;
+      pointer-events: none;
+    }
+    cart-item-view [thumb] {
+      width: 92px;
+      background: transparent no-repeat left center /contain;
+      margin-right: 16px;
+    }
+    cart-item-view [info] {
+      min-width: 0;
+      margin-right: 8px;
+    }
+    cart-item-view [info] > * {
+      margin-bottom: 10px;
+    }
+  </style>
+
+  <template>
+    <div horizontal layout>
+      <div thumb noflex style%="{{thumbStyle}}"></div>
+      <div flex info>
+        <div horizontal layout>
+          <div name flex>{{name}}</div>
+          <div>
+            <div price>{{salePrice}}</div>
+            <div style="text-align: right">each</div>
+          </div>
+        </div>
+        <div horizontal layout>
+          <div>
+            <select value="{{quantity}}" on-change="quantityChange">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+            </select>
+          </div>
+          <div>
+            <a is="nano-anchor" href='?"cart"' disabled="{{disabled}}">Update</a>
+            <a is="nano-anchor" href='?"cart"' on-click="removeClick" disabled="{{disabled}}">Remove</a>
+          </div>
+        </div>
+        <div horizontal center layout style="height: 12px;">
+          <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    document.registerElement('cart-item-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        attachedCallback: function() {
+          this.dom = Annotations.stamp('cart-item-view', this);
+          this.render();
+        },
+        render: function() {
+          var product = this.product;
+          if (!product) {
+            return;
+          }
+
+          var proxy = function(url) {
+            return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
+          }
+
+          var image = product.thumbnailImage || product.mediumImage;
+          this.dom.set({
+            name: product.name,
+            quantity: this.quantity,
+            customerRatingImage: proxy(product.customerRatingImage || ''),
+            salePrice: product.salePrice ? '$' + product.salePrice : '',
+            msrp: product.msrp ? '(Reg $' + product.msrp + ')' : '',
+            // addToCartUrl: product.addToCartUrl,
+            infoUrl: '?' + JSON.stringify({productId:product.itemId}),
+            //thumbStyle: {backgroundImage: 'url("' + (proxy(image) || 'no-image-small.png') + '")'}
+            thumbStyle: {backgroundImage: 'url("' + proxy(image || '') + '")'},
+            numReviews: isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')',
+            customerRating: isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1)
+          });
+
+          // style enabled/disabled anchor tags
+          Nano.boolAttribute(this.querySelector('a').parentElement, 'disabled', !product.name);
+        },
+        quantityChange: function(event) {
+          this.dispatchEvent(new CustomEvent('edit-cart-item', {
+            bubbles: true,
+            detail: {
+              productId: this.product.itemId,
+              quantity: parseInt(event.target.value, 10)
+            }
+          }));
+        },
+        removeClick: function() {
+          this.dispatchEvent(new CustomEvent('edit-cart-item', {
+            bubbles: true,
+            detail: {
+              productId: this.product.itemId,
+              quantity: 0
+            }
+          }));
+        }
+      }
+    });
+  </script>
+</dom-module>

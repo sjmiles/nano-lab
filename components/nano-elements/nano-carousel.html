@@ -1,6 +1,6 @@
 <dom-module id="nano-carousel">
   <style>
-    .arrow-button {
+    nano-carousel > .arrow-button {
       margin: auto;
       padding: 9px;
       font-size: 36px;
@@ -8,13 +8,13 @@
       cursor: pointer;
       border: 1px solid #e5e5e5;
     }
-    #prevBtn {
+    nano-carousel > #prevBtn {
       width: 18px;
       height: 40px;
       border-left: none;
       border-radius: 0 3px 3px 0;
     }
-    #nextBtn {
+    nano-carousel > #nextBtn {
       border-right: none;
       border-radius: 3px 0 0 3px;
       /* HACK(keanulee): Need margin-left to show border due to (potentially) flexbox issue. */
@@ -22,7 +22,7 @@
       width: 18px;
       height: 40px;
     }
-    #nextBtn::after, #prevBtn::after {
+    nano-carousel > #nextBtn::after, #prevBtn::after {
       content: '';
       display: block;
       width: 20px;
@@ -33,20 +33,20 @@
       -webkit-transform: rotate(45deg);
       transform: rotate(45deg);
     }
-    #prevBtn::after {
+    nano-carousel > #prevBtn::after {
       border-top: none;
       border-right: none;
     }
-    #nextBtn::after {
+    nano-carousel > #nextBtn::after {
       margin-left: -4px;
       border-bottom: none;
       border-left: none;
     }
-    #content {
+    nano-carousel > #content {
       position: relative;
       overflow: hidden;
     }
-    #content > * {
+    nano-carousel > #content > * {
       display: block;
       position: absolute;
       top: 0;
@@ -56,7 +56,7 @@
       animation: 300ms ease-in-out both;
       will-change: transform;
     }
-    #content > *:not(:first-child) {
+    nano-carousel > #content > *:not(:first-child) {
       transform: translateX(100%);
     }
     @keyframes slide-in-left {
