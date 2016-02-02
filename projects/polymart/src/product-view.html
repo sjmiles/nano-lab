@@ -2,34 +2,45 @@
   <style>
     product-view {
       display: block;
+      height: 160px;
       padding: 16px;
       text-align: left;
-      font-size: 0.7em;
+      font-size: 0.8em;
       background-color: white;
     }
+    [item] {
+      color: black;
+      text-decoration: none;
+    }
     product-view [name] {
-      height: 46px;
-      font-size: 1.2em;
+      height: 48px;
+      font-size: 1.1em;
       font-weight: 600;
+      line-height: 1.2;
       overflow: hidden;
     }
     product-view [price] {
-      font-size: 1.4em;
+      font-size: 1.8em;
       margin-right: 6px;
+      color: #007dc6;
     }
     product-view [rating] {
       margin-right: 5px;
+      color: #555;
+      font-weight: 700;
     }
     product-view [numReviews] {
-      color: #888;
+      color: #666;
     }
-    product-view a {
-      background-color: #ffc120 !important;
-      padding: 6px 18px !important;
+    product-view [cart] {
+      margin-left: 107px;
+      padding: 6px 20px !important;
+      background-color: #f47421 !important;
+      color: white !important;
       border-radius: 2px;
       font-size: 1.2em !important;
     }
-    product-view div[disabled] a {
+    product-view[disabled] [cart] {
       background-color: whitesmoke !important;
       color: silver;
       pointer-events: none;
@@ -44,7 +55,7 @@
       margin-right: 8px;
     }
     product-view [info] > * {
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
     product-view [shortDesc] {
       display: block;  /* fallback when -webkit-box is not supported */
@@ -59,22 +70,19 @@
     }
   </style>
   <template>
-    <div horizontal layout>
+    <a item horizontal layout href="{{infoUrl}}" target="_blank">
       <div thumb noflex style%="{{thumbStyle}}"></div>
       <div flex info>
         <div name>{{name}}</div>
-        <div horizontal center layout style="height: 18px;">
-          <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
-        </div>
-        <div>
-          <a is="nano-anchor" href="{{infoUrl}}" target="_blank" on-click="infoClick" disabled="{{disabled}}">Info</a>
-          <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick" disabled="{{disabled}}">Buy</a>
-        </div>
         <div horizontal center layout style="height: 12px;">
           <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
         </div>
+        <div horizontal center layout style="height: 18px;">
+          <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
+        </div>
       </div>
-    </div>
+    </a>
+    <a is="nano-anchor" cart href="{{addToCartUrl}}" target="_blank" on-click="cartClick" disabled="{{disabled}}">Add to Cart</a>
   </template>
   <script>
     document.registerElement('product-view', {
@@ -110,10 +118,10 @@
             // render model
             this.dom.set(model);
             // special
-            Nano.boolAttribute(this.querySelector('a').parentElement, 'disabled', !product.name);
+            Nano.boolAttribute(this, 'disabled', !product.name);
           }
         },
-        buyClick: function(e) {
+        cartClick: function(e) {
           e.stopPropagation();
         }
       }

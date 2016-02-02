@@ -4,42 +4,64 @@
       display: block;
       padding: 16px;
       text-align: left;
-      font-size: 0.7em;
+      font-size: 0.8em;
       background-color: white;
     }
     product-detail [name] {
       font-size: 1.2em;
       font-weight: 600;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      height: 40px;
+    }
+    product-detail [price-section] {
+      height: 18px;
+      padding: 32px 0 16px;
     }
     product-detail [price] {
-      font-size: 1.4em;
       margin-right: 6px;
+      font-size: 2.3em;
+      color: #007dc6;
+    }
+    product-detail [rating-section] {
+      height: 12px;
+      padding: 4px 0 10px;
     }
     product-detail [rating] {
       margin-right: 5px;
+      color: #555;
+      font-weight: 700;
     }
     product-detail [numReviews] {
-      color: #888;
+      color: #666;
     }
-    product-detail a {
-      background-color: #ffc120 !important;
-      padding: 6px 18px !important;
+    product-detail [cart] {
+      padding: 6px 24px !important;
+      background-color: #f47421 !important;
+      color: white !important;
       border-radius: 2px;
-      font-size: 1.2em !important;
+      font-size: 1.3em !important;
     }
-    product-detail a[disabled] {
+    product-detail [cart][disabled] {
       background-color: whitesmoke !important;
       color: silver;
       pointer-events: none;
+    }
+    product-detail [rollback] {
+      height: 16px;
+      padding: 0 8px;
+      margin-left: -16px;
+      background: #f42121;
+      border-radius: 0 50px 50px 0;
+      color: #fff;
+      font-size: 0.9em;
+      font-weight: 600;
+      line-height: 16px;
     }
     product-detail [thumb] {
       width: 280px;
       height: 280px;
       background: whitesmoke no-repeat left center /contain;
-      margin-right: 16px;
+      margin: 0 auto;
     }
     product-detail [info] {
       margin-right: 8px;
@@ -49,24 +71,28 @@
     }
     product-detail [longDesc] {
       display: block;
-      padding-top: 8px;
-      font-size: 11px;
-      line-height: 1.3;
+      padding: 16px 0;
+      font-size: 1em;
+      line-height: 1.5;
+    }
+    [invisible] {
+      visibility: hidden;
     }
   </style>
   <template>
     <div name>{{name}}</div>
-    <div horizontal center layout style="height: 12px;">
+    <div rating-section horizontal center layout>
       <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
     </div>
+    <span rollback>Rollback</span> 
     <div thumb noflex style%="{{thumbStyle}}"></div>
     <div horizontal layout>
-      <div flex info Xstyle="height: 115px;">
-        <div horizontal center layout style="height: 18px;">
+      <div flex info>
+        <div price-section horizontal center layout>
           <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
         </div>
         <div>
-          <a is="nano-anchor" href="{{addToCartUrl}}" target="_blank" on-click="buyClick" disabled="{{disabled}}">Buy</a>
+          <a is="nano-anchor" cart href="{{addToCartUrl}}" target="_blank" on-click="cartClick" disabled="{{disabled}}">Add to Cart</a>
         </div>
       </div>
     </div>
@@ -106,20 +132,21 @@
               //thumbStyle: {backgroundImage: 'url("' + (proxy(image) || 'no-image-small.png') + '")'}
               thumbStyle: {backgroundImage: 'url("' + (proxy(image) || '') + '")'}
             };
-            model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')';
+            model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ' Reviews)';
             model.customerRating = isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1);
             //model.shortDescription = txt.textContent.replace(/<(?:.|\n)*?>/gm, '');
             // render model
             this.dom.set(model);
             // special rendering
             Nano.boolAttribute(this.querySelector('a'), 'disabled', !product.name);
+            Nano.boolAttribute(this.querySelector('[rollback]'), 'invisible', !product.rollBack);
             // TODO(sjmiles): convert entities back to live HTML
             var txt = document.createElement("textarea");
             txt.innerHTML = product.longDescription || '';
             this.querySelector('[longDesc]').innerHTML = txt.textContent;
           }
         },
-        buyClick: function(e) {
+        cartClick: function(e) {
           e.stopPropagation();
         }
       }
