@@ -6,9 +6,11 @@
       font-size: 36px;
       color: #999;
       cursor: pointer;
-      border: 1px solid #DDD;
+      border: 1px solid #e5e5e5;
     }
     #prevBtn {
+      width: 18px;
+      height: 40px;
       border-left: none;
       border-radius: 0 3px 3px 0;
     }
@@ -17,6 +19,28 @@
       border-radius: 3px 0 0 3px;
       /* HACK(keanulee): Need margin-left to show border due to (potentially) flexbox issue. */
       margin-left: 1px;
+      width: 18px;
+      height: 40px;
+    }
+    #nextBtn::after, #prevBtn::after {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin: 10px 0px 0 4px;
+      box-sizing: border-box;
+      border: 1px solid #007dc6;
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+    #prevBtn::after {
+      border-top: none;
+      border-right: none;
+    }
+    #nextBtn::after {
+      margin-left: -4px;
+      border-bottom: none;
+      border-left: none;
     }
     #content {
       position: relative;
@@ -54,9 +78,9 @@
   </style>
 
   <template>
-    <div id="prevBtn" class="arrow-button">❮</div>
+    <div id="prevBtn" class="arrow-button"></div>
     <div id="content" flex></div>
-    <div id="nextBtn" class="arrow-button">❯</div>
+    <div id="nextBtn" class="arrow-button"></div>
   </template>
 
   <script>
