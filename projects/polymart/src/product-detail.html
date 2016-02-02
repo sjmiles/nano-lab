@@ -8,10 +8,14 @@
       background-color: white;
     }
     product-detail [name] {
+      display: block;  /* fallback when -webkit-box is not supported */
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* 2 lines */
+      -webkit-box-orient: vertical;
+      height: 38px;
+      overflow: hidden;
       font-size: 1.2em;
       font-weight: 600;
-      overflow: hidden;
-      height: 40px;
     }
     product-detail [price-section] {
       height: 18px;

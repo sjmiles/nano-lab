@@ -14,13 +14,15 @@
   product-carousel {
     height: 116px;
     padding: 10px 0 20px;
-    font-size: 0.7em;
+    font-size: 0.8em;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  product-carousel > div {
+  product-carousel > a {
     width: 96px;
     margin: 0 12px;
+    text-decoration: none;
+    color: inherit;
   }
   product-carousel img {
     width: 100%;
@@ -53,11 +55,11 @@
 
 <dom-module id="mini-view">
   <template>
-    <div noflex vertical center layout>
+    <a noflex vertical center layout href="{{infoUrl}}" target="_blank">
       <img src="{{src}}">
       <span>{{price}}</span>
       <span>{{item}}</span>
-    </div>
+    </a>
   </template>
 </dom-module>
 
@@ -128,6 +130,7 @@
             for (var i=5, item; item=items[i]; i++) {
               var frag = document.createDocumentFragment();
               Annotations.stamp('mini-view', frag).set({
+                infoUrl: '?' + JSON.stringify({productId: item.itemId}),
                 price: '$' + (item.salePrice || item.msrp || (item.bestMarketplacePrice && item.bestMarketplacePrice.price)),
                 name: item.name,
                 src: proxy(item.thumbnailImage)
