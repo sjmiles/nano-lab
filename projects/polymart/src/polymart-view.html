@@ -192,8 +192,10 @@
     <mart-data on-taxonomy-change="onTaxonomyChange" 
                on-trending-change="onTrendingChange"
                on-vod-change="onVodChange"></mart-data>
+    <!-- TODO(keanulee): Implement <cart-data> -->
+    <cart-data on-cart-change="doSomething"></cart-data>
     
-    <content-view>
+    <content-view on-add-cart-item="addCartItem" on-edit-cart-item="editCartItem">
       <app-container>
 
         <div promotion horizontal center middle layout>FREE Shipping on $50+ orders</div>
@@ -270,8 +272,6 @@
       prototype: {
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
-          this.addEventListener('add-cart-item', this.addCartItem.bind(this));
-          this.addEventListener('edit-cart-item', this.editCartItem.bind(this));
           this.dom = Annotations.stamp('polymart-view', this);
           this.views = {home: 0, search: 0, category: 0, product: 0, order: 1, cart: 0};
           this.view = 'home';
@@ -308,6 +308,7 @@
           }
           this.querySelector('icon[arrow-back-white]').style.visibility = (view === 'home') ? 'hidden' : '';
         },
+        // TODO(keanulee): <cart-data>
         get cart() {
           if (this._cart) {
             return this._cart;
@@ -339,14 +340,7 @@
               this.dom.set(route);
             } else if (route == 'cart') {
               this.view = 'cart';
-              // NOTE(keanulee): Cannot dom.set until cart-view is created - must do some sort of async on initial load :(
-              if (this.querySelector('cart-view').isCreated) {
-                this.dom.set({cart: this.cart});
-              } else {
-                window.setTimeout(function() {
-                  this.dom.set({cart: this.cart});
-                }.bind(this), 0);
-              }
+              this.dom.set({ cart: this.cart });
             } else if (route == 'order') {
               this.view = 'order';
             }
@@ -358,6 +352,8 @@
           this.dom.set('route', '.');
         },
         addCartItem: function(event) {
+          // TODO(keanulee): move logic to <cart-data>
+          // <cart-data>.add(...)
           var cart = this.cart;
           var detail = event.detail;
           cart[detail.productId] = cart[detail.productId] || 0;
@@ -365,6 +361,7 @@
           this.cart = cart;
         },
         editCartItem: function(event) {
+          // TODO(keanulee): move logic to <cart-data>
           var cart = this.cart;
           var detail = event.detail;
           if (detail.quantity == 0) {

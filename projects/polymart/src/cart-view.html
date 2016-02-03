@@ -2,9 +2,14 @@
   <style>
     cart-view {
       display: block;
+      padding: 16px;
       background: white;
     }
+    cart-view > div {
+      margin-top: 16px;
+    }
     cart-view a {
+      margin: 4px auto;
       background-color: #f47421 !important;
       color: white !important;
       padding: 6px 18px !important;
@@ -19,15 +24,16 @@
   </style>
 
   <template>
+    <nano-ajax on-response="onResponse"></nano-ajax>
+
     <div id="content"></div>
     <div layout horizontal>
-      <div>
-        Estimated Total: $<span>{{total}}</span>
-      </div>
+      <div>Estimated Total:</div>
       <div flex></div>
-      <div>
-        <a is="nano-anchor" href='?"order"'>Checkout</a>
-      </div>
+      <div>$<span>{{total}}</span></div>
+    </div>
+    <div style="text-align: right;">
+      <a is="nano-anchor" href='?"order"'>Checkout</a>
     </div>
   </template>
 
@@ -40,26 +46,26 @@
           this._productIds = null;
           this.dom = Annotations.stamp('cart-view', this);
           this.render(null);
+          Nano.acquire(this, 'cart');
         },
         get content() {
-          this._content = this._content || this.querySelector('#content');
+          this._content = this._content || this.dom.$('#content');
           return this._content;
         },
         set cart(cart) {
           this._cart = cart;
           this._productIds = Object.keys(cart);
           if (this._productIds.length) {
+            // Pre-render placeholders until AJAX response.
             this.render(this._productIds.map(function(id) { return { itemId: id } }));
 
-            Nano.create('nano-ajax', {
-              url: 'mart/multi-lookup.php?' + this._productIds.join(','), 
-              '@response': function(e) { 
-                this.render(e.detail.items);
-              }.bind(this)
-            });
+            this.dom.$('nano-ajax').url = 'mart/multi-lookup.php?' + this._productIds.join(',');
           } else {
             this.render(null);
           }
+        },
+        onResponse: function(e) {
+          this.render(e.detail.items);
         },
         render: function(products) {
           // style enabled/disabled anchor tags
@@ -67,6 +73,7 @@
 
           if (!products) {
             this.content.innerText = 'Your cart is empty - buy more things!'
+            this.dom.set({ total: 0 });
             return;
           }
 
@@ -74,12 +81,14 @@
           var frag = document.createDocumentFragment();
           products.forEach(function(product) {
             var quantity = this._cart[product.itemId];
-            total += quantity * product.salePrice;
+            if (product.salePrice) {
+              total += quantity * product.salePrice;
+            }
 
-            var civ = document.createElement('cart-item-view');
-            civ.product = product;
-            civ.quantity = quantity;
-            frag.appendChild(civ);
+            frag.appendChild(Nano.create('cart-item-view', {
+              product: product,
+              quantity: quantity
+            }));
           }, this);
 
           this.content.innerText = '';

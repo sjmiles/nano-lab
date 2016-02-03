@@ -2,7 +2,7 @@
   <style>
     cart-item-view {
       display: block;
-      padding: 16px;
+      margin-top: 16px;
       text-align: left;
       font-size: 0.7em;
     }
@@ -34,7 +34,7 @@
       border-radius: 2px;
       font-size: 1.2em !important;
     }
-    cart-item-view div[disabled] a {
+    cart-item-view[disabled] a {
       background-color: whitesmoke !important;
       color: silver;
       pointer-events: none;
@@ -125,7 +125,7 @@
           });
 
           // style enabled/disabled anchor tags
-          Nano.boolAttribute(this.querySelector('a').parentElement, 'disabled', !product.name);
+          Nano.boolAttribute(this, 'disabled', !product.name);
         },
         quantityChange: function(event) {
           this.dispatchEvent(new CustomEvent('edit-cart-item', {

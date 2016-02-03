@@ -17,8 +17,6 @@
     nano-carousel > #nextBtn {
       border-right: none;
       border-radius: 3px 0 0 3px;
-      /* HACK(keanulee): Need margin-left to show border due to (potentially) flexbox issue. */
-      margin-left: 1px;
       width: 18px;
       height: 40px;
     }
@@ -78,9 +76,9 @@
   </style>
 
   <template>
-    <div id="prevBtn" class="arrow-button"></div>
+    <div id="prevBtn" class="arrow-button" on-click="prev"></div>
     <div id="content" flex></div>
-    <div id="nextBtn" class="arrow-button"></div>
+    <div id="nextBtn" class="arrow-button" on-click="next"></div>
   </template>
 
   <script>
@@ -90,14 +88,10 @@
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
           this.x = 0;
-        },
-        attachedCallback: function() {
           this.dom = Annotations.stamp('nano-carousel', this);
-          this.querySelector('#prevBtn').addEventListener('click', this.prev.bind(this));
-          this.querySelector('#nextBtn').addEventListener('click', this.next.bind(this));
         },
         get content() {
-          this._content = this._content || this.querySelector('#content');
+          this._content = this._content || this.dom.$('#content');
           return this._content;
         },
         prev: function() {
