@@ -192,8 +192,7 @@
     <mart-data on-taxonomy-change="onTaxonomyChange" 
                on-trending-change="onTrendingChange"
                on-vod-change="onVodChange"></mart-data>
-    <!-- TODO(keanulee): Implement <cart-data> -->
-    <cart-data on-cart-change="doSomething"></cart-data>
+    <cart-data on-cart-change="onCartChange"></cart-data>
     
     <content-view on-add-cart-item="addCartItem" on-edit-cart-item="editCartItem">
       <app-container>
@@ -285,6 +284,9 @@
         onVodChange: function(e) {
           this.dom.set({vod: e.detail});
         },
+        onCartChange: function(e) {
+          this.dom.set({cart: e.detail});
+        },
         set view(view) {
           if (this._view === view) {
             return;
@@ -308,20 +310,6 @@
           }
           this.querySelector('icon[arrow-back-white]').style.visibility = (view === 'home') ? 'hidden' : '';
         },
-        // TODO(keanulee): <cart-data>
-        get cart() {
-          if (this._cart) {
-            return this._cart;
-          }
-
-          var savedCart = localStorage.getItem('cart');
-          this._cart = savedCart ? JSON.parse(savedCart) : {};
-          return this._cart;
-        },
-        set cart(cart) {
-          this._cart = cart;
-          localStorage.setItem('cart', JSON.stringify(this._cart));
-        },
         searchKey: function(e) {
           if (e.keyCode === 13) {
             this.view = 'search';
@@ -340,7 +328,6 @@
               this.dom.set(route);
             } else if (route == 'cart') {
               this.view = 'cart';
-              this.dom.set({ cart: this.cart });
             } else if (route == 'order') {
               this.view = 'order';
             }
@@ -352,24 +339,10 @@
           this.dom.set('route', '.');
         },
         addCartItem: function(event) {
-          // TODO(keanulee): move logic to <cart-data>
-          // <cart-data>.add(...)
-          var cart = this.cart;
-          var detail = event.detail;
-          cart[detail.productId] = cart[detail.productId] || 0;
-          cart[detail.productId] += detail.quantity;
-          this.cart = cart;
+          this.dom.$('cart-data').addItem(event.detail);
         },
         editCartItem: function(event) {
-          // TODO(keanulee): move logic to <cart-data>
-          var cart = this.cart;
-          var detail = event.detail;
-          if (detail.quantity == 0) {
-            delete cart[detail.productId];
-          } else {
-            cart[detail.productId] = detail.quantity;
-          }
-          this.cart = cart;
+          this.dom.$('cart-data').editItem(event.detail);
         },
         searchTap: function() {
           this.querySelector('search-bar').classList.toggle('hidden');

@@ -24,13 +24,10 @@
     cart-item-view [numReviews] {
       color: #888;
     }
-    cart-item-view select {
-      margin: 6px;
-    }
     cart-item-view a {
       background-color: #f47421 !important;
       margin: 2px 0;
-      padding: 6px 18px !important;
+      padding: 2px 8px !important;
       border-radius: 2px;
       font-size: 1.2em !important;
     }
@@ -64,25 +61,21 @@
             <div style="text-align: right">each</div>
           </div>
         </div>
-        <div horizontal layout>
-          <div>
-            <select value="{{quantity}}" on-change="quantityChange">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-            </select>
-          </div>
-          <div>
-            <a is="nano-anchor" href='?"cart"' disabled="{{disabled}}">Update</a>
-            <a is="nano-anchor" href='?"cart"' on-click="removeClick" disabled="{{disabled}}">Remove</a>
-          </div>
+        <div>
+          Qty.
+          <select id="quantity" value="{{quantity}}" on-change="quantityChange">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+          <a is="nano-anchor" href='?"cart"' on-click="removeClick" disabled="{{disabled}}">Remove</a>
         </div>
         <div horizontal center layout style="height: 12px;">
           <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>

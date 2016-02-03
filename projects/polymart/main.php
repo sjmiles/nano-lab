@@ -21,6 +21,7 @@ $contextual = concat([
   "../../components/nano-elements/nano-carousel.html",
   "src/product-view.html",
   "src/home-view.html",
+  "src/cart-data.html",
   "src/cart-view.html",
   "src/cart-item-view.html",
   "src/grid-layout.html",
