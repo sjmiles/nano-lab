@@ -40,6 +40,19 @@
     display: none;
     display: inline-block;
     cursor: pointer;
+    position: relative;
+  }
+
+  icon > span {
+    padding: 2px 6px;
+    border-radius: 7px;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.7em;
+    font-weight: bold;
+    background-color: #f47421;
+    color: white;
   }
 
   app-bar {
@@ -254,7 +267,7 @@
           <h2 flex title>Polymart</h2>
           <icon search-white margin tabindex="2" on-click="searchTap"></icon>
           <a href='?"cart"' tabindex="3">
-            <icon cart-white></icon>
+            <icon cart-white><span>{{cartCount}}</span></icon>
           </a>
         </div>
 
@@ -285,7 +298,10 @@
           this.dom.set({vod: e.detail});
         },
         onCartChange: function(e) {
-          this.dom.set({cart: e.detail});
+          this.dom.set({
+            cart: e.detail,
+            cartCount: Object.keys(e.detail).length
+          });
         },
         set view(view) {
           if (this._view === view) {
