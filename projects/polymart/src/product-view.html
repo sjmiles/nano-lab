@@ -81,7 +81,7 @@
         </div>
       </div>
     </a>
-    <a is="nano-anchor" cart href="{{addToCartUrl}}" target="_blank" on-click="cartClick" disabled="{{disabled}}">Add to Cart</a>
+    <a is="nano-anchor" cart href='?"cart"' on-click="addToCartClick" disabled="{{disabled}}">Add to Cart</a>
   </template>
   <script>
     document.registerElement('product-view', {
@@ -96,6 +96,8 @@
             return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
           }
           if (product) {
+            this._productId = product.itemId;
+
             var image = product.thumbnailImage || product.mediumImage; 
             // adapt view model
             var model = {
@@ -103,14 +105,14 @@
               customerRatingImage: proxy(product.customerRatingImage || ''),
               salePrice: product.salePrice ? '$' + product.salePrice : '',
               msrp: product.msrp ? '(Reg $' + product.msrp + ')' : '',
-              addToCartUrl: product.addToCartUrl,
+              // addToCartUrl: product.addToCartUrl,
               infoUrl: '?' + JSON.stringify({productId:product.itemId}),
               //thumbStyle: {backgroundImage: 'url("' + (proxy(image) || 'no-image-small.png') + '")'}
               thumbStyle: {backgroundImage: 'url("' + (proxy(image) || '') + '")'}
             };
             model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')';
             model.customerRating = isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1);
-            // TODO(sjmiles): don't remember what this is for
+            // TODO(sjmiles): don't remember what this is for - escaping HTML?
             var txt = document.createElement("textarea");
             txt.innerHTML = product.shortDescription || product.longDescription || '';
             model.shortDescription = txt.textContent.replace(/<(?:.|\n)*?>/gm, '');
@@ -120,8 +122,14 @@
             Nano.boolAttribute(this, 'disabled', !product.name);
           }
         },
-        cartClick: function(e) {
-          e.stopPropagation();
+        addToCartClick: function(e) {
+          this.dispatchEvent(new CustomEvent('add-cart-item', {
+            bubbles: true,
+            detail: {
+              productId: this._productId,
+              quantity: 1 // parseInt(this.dom.$('#quantity').value, 10)
+            }
+          }));
         }
       }
     });

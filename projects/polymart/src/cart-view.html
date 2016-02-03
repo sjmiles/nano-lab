@@ -1,0 +1,102 @@
+<dom-module id="cart-view">
+  <style>
+    cart-view {
+      display: block;
+      padding: 16px;
+      background: white;
+    }
+    cart-view > div {
+      margin-top: 16px;
+    }
+    cart-view a {
+      margin: 4px auto;
+      background-color: #f47421 !important;
+      color: white !important;
+      padding: 6px 18px !important;
+      border-radius: 2px;
+      font-size: 1.2em !important;
+    }
+    cart-view[disabled] a {
+      background-color: whitesmoke !important;
+      color: silver;
+      pointer-events: none;
+    }
+  </style>
+
+  <template>
+    <nano-ajax on-response="onResponse"></nano-ajax>
+
+    <div id="content"></div>
+    <div layout horizontal>
+      <div>Estimated Total:</div>
+      <div flex></div>
+      <div>$<span>{{total}}</span></div>
+    </div>
+    <div style="text-align: right;">
+      <a is="nano-anchor" href='?"order"'>Checkout</a>
+    </div>
+  </template>
+
+  <script>
+    document.registerElement('cart-view', {
+      prototype: {
+        __proto__: HTMLElement.prototype,
+        createdCallback: function() {
+          this._cart = {};
+          this._productIds = null;
+          this.dom = Annotations.stamp('cart-view', this);
+          this.render(null);
+          Nano.acquire(this, 'cart');
+        },
+        get content() {
+          this._content = this._content || this.dom.$('#content');
+          return this._content;
+        },
+        set cart(cart) {
+          this._cart = cart;
+          this._productIds = Object.keys(cart);
+          if (this._productIds.length) {
+            // Pre-render placeholders until AJAX response.
+            this.render(this._productIds.map(function(id) { return { itemId: id } }));
+
+            this.dom.$('nano-ajax').url = 'mart/multi-lookup.php?' + this._productIds.join(',');
+          } else {
+            this.render(null);
+          }
+        },
+        onResponse: function(e) {
+          this.render(e.detail.items);
+        },
+        render: function(products) {
+          // style enabled/disabled anchor tags
+          Nano.boolAttribute(this, 'disabled', !products);
+
+          if (!products) {
+            this.content.innerText = 'Your cart is empty - buy more things!'
+            this.dom.set({ total: 0 });
+            return;
+          }
+
+          var total = 0;
+          var frag = document.createDocumentFragment();
+          products.forEach(function(product) {
+            var quantity = this._cart[product.itemId];
+            if (product.salePrice) {
+              total += quantity * product.salePrice;
+            }
+
+            frag.appendChild(Nano.create('cart-item-view', {
+              product: product,
+              quantity: quantity
+            }));
+          }, this);
+
+          this.content.innerText = '';
+          this.content.appendChild(frag);
+
+          this.dom.set({ total: total.toFixed(2) });
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,39 @@
+<script>
+  document.registerElement('cart-data', {
+    prototype: {
+      __proto__: HTMLElement.prototype,
+      createdCallback: function() {
+        var savedCart = localStorage.getItem(this.LOCAL_STORAGE_KEY);
+        this._cart = savedCart ? JSON.parse(savedCart) : {};
+        this.notify();
+      },
+      get cart() {
+        return this._cart;
+      },
+      set cart(cart) {
+        this._cart = cart;
+        localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(cart));
+        this.notify();
+      },
+      addItem: function(detail) {
+        var cart = this.cart;
+        cart[detail.productId] = cart[detail.productId] || 0;
+        cart[detail.productId] += detail.quantity;
+        this.cart = cart;
+      },
+      editItem: function(detail) {
+        var cart = this.cart;
+        if (detail.quantity == 0) {
+          delete cart[detail.productId];
+        } else {
+          cart[detail.productId] = detail.quantity;
+        }
+        this.cart = cart;
+      },
+      notify: function() {
+        this.dispatchEvent(new CustomEvent('cart-change', {detail: this.cart}));
+      },
+      LOCAL_STORAGE_KEY: 'cart'
+    }
+  });
+</script>

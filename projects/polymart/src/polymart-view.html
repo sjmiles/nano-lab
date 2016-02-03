@@ -40,6 +40,19 @@
     display: none;
     display: inline-block;
     cursor: pointer;
+    position: relative;
+  }
+
+  icon > span {
+    padding: 2px 6px;
+    border-radius: 7px;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 0.7em;
+    font-weight: bold;
+    background-color: #f47421;
+    color: white;
   }
 
   app-bar {
@@ -192,8 +205,9 @@
     <mart-data on-taxonomy-change="onTaxonomyChange" 
                on-trending-change="onTrendingChange"
                on-vod-change="onVodChange"></mart-data>
+    <cart-data on-cart-change="onCartChange"></cart-data>
     
-    <content-view>
+    <content-view on-add-cart-item="addCartItem" on-edit-cart-item="editCartItem">
       <app-container>
 
         <div promotion horizontal center middle layout>FREE Shipping on $50+ orders</div>
@@ -212,6 +226,10 @@
               
         <view-panel product>
           <product-detail productid="{{productId}}"></product-detail>
+        </view-panel>
+
+        <view-panel cart>
+          <cart-view cart="{{cart}}"></cart-view>
         </view-panel>
         
         <view-panel order>
@@ -248,7 +266,9 @@
           <icon margin></icon>
           <h2 flex title>Polymart</h2>
           <icon search-white margin tabindex="2" on-click="searchTap"></icon>
-          <icon cart-white tabindex="2" on-click="cartTap"></icon>
+          <a href='?"cart"' tabindex="3">
+            <icon cart-white><span>{{cartCount}}</span></icon>
+          </a>
         </div>
 
       </app-bar>
@@ -265,7 +285,7 @@
         __proto__: HTMLElement.prototype,
         createdCallback: function() {
           this.dom = Annotations.stamp('polymart-view', this);
-          this.views = {home: 0, search: 0, category: 0, product: 0, order: 1};
+          this.views = {home: 0, search: 0, category: 0, product: 0, order: 1, cart: 0};
           this.view = 'home';
         },
         onTaxonomyChange: function(e) {
@@ -276,6 +296,12 @@
         },
         onVodChange: function(e) {
           this.dom.set({vod: e.detail});
+        },
+        onCartChange: function(e) {
+          this.dom.set({
+            cart: e.detail,
+            cartCount: Object.keys(e.detail).length
+          });
         },
         set view(view) {
           if (this._view === view) {
@@ -313,20 +339,26 @@
             if (route.category) {
               this.view = 'category';
               this.dom.set(route);
-            } 
-            else if (route.productId) {
+            } else if (route.productId) {
               this.view = 'product';
               this.dom.set(route);
+            } else if (route == 'cart') {
+              this.view = 'cart';
+            } else if (route == 'order') {
+              this.view = 'order';
             }
-            console.log(route);
+            console.log('onRouteChange', route);
           }
         },
         backButtonTap: function() {
           this.view = 'home';
           this.dom.set('route', '.');
         },
-        cartTap: function() {
-          this.view = 'order';
+        addCartItem: function(event) {
+          this.dom.$('cart-data').addItem(event.detail);
+        },
+        editCartItem: function(event) {
+          this.dom.$('cart-data').editItem(event.detail);
         },
         searchTap: function() {
           this.querySelector('search-bar').classList.toggle('hidden');

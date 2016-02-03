@@ -96,7 +96,7 @@
           <b price><span>{{salePrice}}</span></b><span>{{msrp}}</span>
         </div>
         <div>
-          <a is="nano-anchor" cart href="{{addToCartUrl}}" target="_blank" on-click="cartClick" disabled="{{disabled}}">Add to Cart</a>
+          <a is="nano-anchor" cart href='?"cart"' on-click="addToCartClick" disabled="{{disabled}}">Add to Cart</a>
         </div>
       </div>
     </div>
@@ -124,6 +124,8 @@
             return url ? 'mart/proxy.php?' + encodeURIComponent(url) : '';
           }
           if (product) {
+            this._productId = product.itemId;
+
             //console.dir(product);
             var image = product.largeImage || product.mediumImage; 
             // adapt view model
@@ -150,8 +152,14 @@
             this.querySelector('[longDesc]').innerHTML = txt.textContent;
           }
         },
-        cartClick: function(e) {
-          e.stopPropagation();
+        addToCartClick: function(e) {
+          this.dispatchEvent(new CustomEvent('add-cart-item', {
+            bubbles: true,
+            detail: {
+              productId: this._productId,
+              quantity: 1 // parseInt(this.querySelector('#quantity').value, 10)
+            }
+          }));
         }
       }
     });
