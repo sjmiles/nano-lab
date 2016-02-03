@@ -12,8 +12,9 @@
       color: black;
       text-decoration: none;
     }
-    product-view [name] {
+    product-view [info] [name] {
       height: 48px;
+      margin: 2px 0 6px;
       font-size: 1.1em;
       font-weight: 600;
       line-height: 1.2;
@@ -24,6 +25,9 @@
       margin-right: 6px;
       color: #007dc6;
     }
+    product-view[disabled] [price] {
+      color: white;
+    }
     product-view [rating] {
       margin-right: 5px;
       color: #555;
@@ -33,7 +37,7 @@
       color: #666;
     }
     product-view [cart] {
-      margin-left: 102px;
+      margin-left: 108px;
       padding: 6px 20px !important;
       background-color: #f47421 !important;
       color: white !important;
@@ -48,13 +52,13 @@
     product-view [thumb] {
       width: 92px;
       background: transparent no-repeat left center /contain;
-      margin-right: 10px;
+      margin: 0 16px -40px 0;
     }
     product-view [info] {
       min-width: 0;
     }
     product-view [info] > * {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     product-view [shortDesc] {
       display: block;  /* fallback when -webkit-box is not supported */
@@ -72,7 +76,7 @@
     <a item horizontal layout href="{{infoUrl}}" target="_blank">
       <div thumb noflex style%="{{thumbStyle}}"></div>
       <div flex info>
-        <div name>{{name}}</div>
+        <div name horizontal layout>{{name}}</div>
         <div horizontal center layout style="height: 12px;">
           <img rating src="{{customerRatingImage}}"><span rating>{{customerRating}}</span><span numReviews>{{numReviews}}</span>
         </div>
@@ -102,8 +106,8 @@
             // adapt view model
             var model = {
               name: product.name,
-              customerRatingImage: proxy(product.customerRatingImage || ''),
-              salePrice: product.salePrice ? '$' + product.salePrice : '',
+              customerRatingImage: proxy(product.customerRatingImage || 'http://i2.walmartimages.com/i/CustRating/0.gif'),
+              salePrice: product.salePrice ? '$' + product.salePrice : 'Coming Soon',
               msrp: product.msrp ? '(Reg $' + product.msrp + ')' : '',
               // addToCartUrl: product.addToCartUrl,
               infoUrl: '?' + JSON.stringify({productId:product.itemId}),
@@ -112,6 +116,8 @@
             };
             model.numReviews = isNaN(product.numReviews) ? '' : '(' + product.numReviews + ')';
             model.customerRating = isNaN(product.customerRating) ? '' : Number(product.customerRating).toFixed(1);
+            // center aligned title only if the title is short
+            Nano.boolAttribute(this.dom.$('[name]'), 'center', product.name && product.name.length < 50);
             // TODO(sjmiles): don't remember what this is for - escaping HTML?
             var txt = document.createElement("textarea");
             txt.innerHTML = product.shortDescription || product.longDescription || '';

@@ -21,6 +21,7 @@
   product-carousel > a {
     width: 96px;
     margin: 0 12px;
+    font-weight: bold;
     text-decoration: none;
     color: inherit;
   }
@@ -31,9 +32,15 @@
     background: #80bd00;
     color: white;
   }
+  [vod] [title] {
+    display: inline-block;
+    margin: 16px 16px 16px 0;
+    padding: 6px 16px 6px 6px;
+    background: #007dc6;
+    border-radius: 0 20px 20px 0;
+  }
   action-call {
-    height: 226px;
-    padding: 4px 16px;
+    padding: 0 16px 32px;
     color: black;
   }
   action-call > product-view {
@@ -58,7 +65,6 @@
     <a noflex vertical center layout href="{{infoUrl}}" target="_blank">
       <img src="{{src}}">
       <span>{{price}}</span>
-      <span>{{item}}</span>
     </a>
   </template>
 </dom-module>
@@ -77,7 +83,7 @@
       </section>
 
       <section vod>
-        <h3>Value of the day</h3>
+        <h3 title>Value of the day</h3>
         <action-call vertical middle layout>
           <product-view product="{{vod}}"></product-view>
         </action-call>
